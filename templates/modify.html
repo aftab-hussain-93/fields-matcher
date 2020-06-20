@@ -1,0 +1,16 @@
+<!doctype html>
+<title>Modify File Headings</title>
+<h1>Modify headings</h1>
+<form method="POST" action="">
+    {{ form.hidden_tag() }}
+    {% for head in headings %}
+    {{ ((form|attr(head))|attr('label'))|attr('text') }}
+    {{ form|attr(head)(placeholder=head)}}
+    {% endfor %}
+<input type=submit value=Upload>
+</form>
+<!-- <form>
+{% for f in form.data %}
+    {{ f }}
+{% endfor %}
+</form> -->
