@@ -19,6 +19,7 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.')[1].lower() in ALLOWED_EXTENSIONS
 
+@app.route('/index', methods = ['GET', 'POST'])
 @app.route('/', methods = ['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
@@ -53,7 +54,7 @@ def modify_file(filename):
     if form.validate_on_submit():
         print("Form data validated")
         return redirect(url_for('upload_file'))
-    return render_template('modify.html', form = form, headings = headers)
+    return render_template('modify.html', form = form, headings = headers, filename = filename, extension = extension)
 
 @app.route('/api/upload', methods=['POST'])
 def api_upload():
@@ -96,6 +97,7 @@ def api_upload():
 @app.route('/api/modify',methods=['POST'])
 def api_modify():
     data = request.get_json()
+    #print(data)
     filename = data['filename']
     extension = data['extension']
     headers = data['headers']
@@ -112,11 +114,17 @@ def api_modify():
         return resp
     else:
         new_name = modify_headers(filename, extension, position_dict, header_name_dict)
-        return redirect(url_for('api_download', filename = new_name))
+        resp = jsonify({
+            'modifiedFile' : new_name
+        })
+        resp.status_code = 201
+        return resp
+        # return redirect(url_for('api_download', filename = new_name))
 
 
 @app.route('/api/download/<filename>')
 def api_download(filename):
+    print(f"Downloading file name {filename}")
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename, as_attachment=True)
 

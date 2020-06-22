@@ -1,6 +1,6 @@
-import pandas
+import pandas, datetime, os
 from werkzeug.utils import secure_filename
-import os
+
 
 UPLOAD_FOLDER = r'D:\development\project - fields matcher\uploads'
 
@@ -43,7 +43,8 @@ def modify_headers(filename, extension, position_dict, name_dict):
     df = df[new_header_ls]
     df.rename(columns=name_dict,inplace=True)
     extension = extension.lower()
-    new_name = f'{name}_modified.{extension}'
+    now = datetime.datetime.now().strftime('%y%m%d%H%M%S')
+    new_name = f'{name}{now}.{extension}'
     if extension in ('csv','comma'):
         df.to_csv(os.path.join(UPLOAD_FOLDER,new_name), index = False, header=True)
     elif extension in ('excel','xls','xlsx'):
