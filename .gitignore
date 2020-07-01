@@ -2,3 +2,9 @@ __pycache__
 archive
 testing_scripts
 venv
+notes.txt
+notes2.txt
+uploads
+/app/uploads/
+/app/temp/
+/app/downloads/

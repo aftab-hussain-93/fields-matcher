@@ -5,9 +5,6 @@ from flask import current_app
 
 ALLOWED_EXTENSIONS = {'csv','xls','xlsx'}
 
-
-# UPLOAD_FOLDER = r'D:\development\project - fields matcher\uploads'
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.')[1].lower() in ALLOWED_EXTENSIONS
 
@@ -20,7 +17,6 @@ def save_file(file):
     """
     with current_app.app_context():
         UPLOAD_FOLDER = os.path.join(os.path.normpath(current_app.root_path), current_app.config['UPLOAD_FOLDER'])
-        # UPLOAD_FOLDER = app.config['UPLOAD_FOLDER']
     filename = secure_filename(file.filename)
     file_path = os.path.join(UPLOAD_FOLDER,filename)
     file.save(file_path)
@@ -28,7 +24,7 @@ def save_file(file):
 
 def get_file_headers(filename):
     with current_app.app_context():
-        UPLOAD_FOLDER = os.path.join(os.path.normpath(current_app.root_path), current_app.config['UPLOAD_FOLDER'])
+        UPLOAD_FOLDER = os.path.join(os.path.normpath(current_app.root_path), current_app.config['TEMP_FILES'])
     file_path = os.path.join(UPLOAD_FOLDER,filename)
     ext = filename.rsplit('.')[-1].lower()
     if ext == 'csv':
@@ -38,19 +34,27 @@ def get_file_headers(filename):
     headers = df.columns.to_list()
     return headers, ext
 
-def change_file_extension(filename, new_extension):
-    pass
+def get_file_details(file_obj):
+    # print(pandas.read_csv(file_obj))
+    filename = file_obj.filename
+    ext = filename.rsplit('.')[-1].lower()
+    if ext == 'csv':
+        df = pandas.read_csv(file_obj)
+    elif ext in ['xls','xlsx']:
+        df = pandas.read_excel(file_obj)
+    headers = df.columns.to_list()
+    return headers, ext
 
-def modify_headers(filename, extension, position_dict, name_dict):
+
+
+def modify_headers(file_obj, extension, position_dict, name_dict):
+    filename = file_obj.filename
     new_header_ls = [x[0] for x in sorted(position_dict.items(), key=lambda x:x[1])]
-    print("The new header list is going to be")
-    print(new_header_ls)
+    with current_app.app_context():
+        DOWNLOAD_FOLDER = os.path.join(os.path.normpath(current_app.root_path),current_app.config['DOWNLOAD_FOLDER'])
     name, ext = os.path.splitext(filename)
     ext = ext.split('.')[-1].lower()
-    with current_app.app_context():
-        UPLOAD_FOLDER = os.path.join(os.path.normpath(current_app.root_path), current_app.config['UPLOAD_FOLDER'])
-        DOWNLOAD_FOLDER = os.path.join(os.path.normpath(current_app.root_path), current_app.config['DOWNLOAD_FOLDER'])
-    file_path = os.path.join(os.path.normpath(UPLOAD_FOLDER),filename)
+    file_path = os.path.join(os.path.normpath(current_app.root_path),file_obj.directory,filename)
     if ext == 'csv':
         df = pandas.read_csv(file_path)
     elif ext in ['xls','xlsx']:
@@ -59,9 +63,11 @@ def modify_headers(filename, extension, position_dict, name_dict):
     df.rename(columns=name_dict,inplace=True)
     extension = extension.lower()
     now = datetime.datetime.now().strftime('%y%m%d%H%M%S')
-    new_name = f'{name}{now}.{extension}'
+    new_name = f'{name}{now}'
     if extension in ('csv','comma'):
+        new_name = new_name + ".csv"
         df.to_csv(os.path.join(os.path.normpath(DOWNLOAD_FOLDER),new_name), index = False, header=True)
     elif extension in ('excel','xls','xlsx'):
+        new_name = new_name + ".xlsx"
         df.to_excel(os.path.join(os.path.normpath(DOWNLOAD_FOLDER),new_name), index = False, header=True)
     return new_name

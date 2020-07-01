@@ -9,3 +9,4 @@ class Config:
 	DOWNLOAD_FOLDER = "downloads"
 	MAX_CONTENT_LENGTH = 16 * 1024 * 102
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
+	TEMP_FILES = "temp"

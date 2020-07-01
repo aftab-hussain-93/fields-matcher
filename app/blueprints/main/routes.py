@@ -1,6 +1,7 @@
 # from main import main
 from flask import send_from_directory, request, current_app, redirect, url_for, render_template
 from app.utils import save_file, get_file_headers, modify_headers, allowed_file
+from app.blueprints.api.routes import api
 from flask import Blueprint
 import os
 
@@ -9,22 +10,14 @@ main = Blueprint('main',__name__)
 @main.route('/index', methods = ['GET', 'POST'])
 @main.route('/', methods = ['GET', 'POST'])
 def upload_file():
-    print("Hwerer")
     if request.method == 'POST':
-        print("Check 1!!")
-        print(request.files)
         if 'file' not in request.files:
-            print('No File part')
             return redirect(request.url)
         file = request.files['file']
-        print("Check 2!!")
         if file.filename == '':
-            print("No selected file")
             return redirect(request.url)
-        print("Check 3!!")
         if file and allowed_file(file.filename):
             filename = save_file(file)
-            print("FIle saved redirecting")
             return redirect(url_for('main.modify_file', filename = filename))
     return '''
 <!doctype html>
