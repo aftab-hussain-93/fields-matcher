@@ -1,39 +1,34 @@
 # from main import main
-from flask import send_from_directory, request, current_app, redirect, url_for, render_template
-from app.utils import save_file, get_file_headers, modify_headers, allowed_file
+from flask import (send_from_directory, request, session, 
+                    current_app, redirect, url_for, render_template)
+from app.utils import  get_file_headers, modify_headers, allowed_file
 from app.blueprints.api.routes import api
+from app.blueprints.api.models import File
 from flask import Blueprint
 import os
 
 main = Blueprint('main',__name__)
 
-@main.route('/index', methods = ['GET', 'POST'])
-@main.route('/', methods = ['GET', 'POST'])
+@main.route('/index', methods = ['GET'])
+@main.route('/', methods = ['GET'])
 def upload_file():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            return redirect(request.url)
-        file = request.files['file']
-        if file.filename == '':
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = save_file(file)
-            return redirect(url_for('main.modify_file', filename = filename))
-    return '''
-<!doctype html>
-<title>Upload new File</title>
-<h1>Upload new File</h1>
-<form method=post enctype=multipart/form-data>
-<input type=file name=file>
-<input type=submit value=Upload>
-</form>
-'''
+    """
+    Home page to upload the file. The file upload is handled by JQuery AJAX Form.
+    """
+    current_app.logger.info("In home page")
+    return render_template('home.html')
 
-@main.route('/modify/<filename>', methods=['POST','GET'])
-def modify_file(filename):
-    headers, extension = get_file_headers(filename)
-    return render_template('modify.html', headings = headers, filename = filename, extension = extension)
-
+@main.route('/modify', methods=['POST'])
+def modify_file():
+    """
+    After file upload, the page with all the details. Called by JQuery Ajax call.
+    """
+    file_id = request.form['file_id']
+    current_file = File.query.filter_by(public_id=file_id).first()
+    filename = current_file.filename
+    headers, extension = get_file_headers(current_file)
+    current_app.logger.info(f"Modifying file - {file_id}")
+    return render_template('modify.html', headings=headers, file_id=file_id, filename=filename, extension=extension)
 
 @main.route('/api/download/<filename>')
 def api_download(filename):

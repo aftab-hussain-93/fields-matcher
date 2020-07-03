@@ -1,35 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='jqueryui/jquery-ui.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='jqueryui/jquery-ui.structure.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='jqueryui/jquery-ui.theme.css') }}"
-    />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="{{ url_for('static', filename='jqueryui/jquery-ui.js') }}"></script>
-    <title>Modify File Headings</title>
-    <style>
-      #form-contents {
-        max-width: 90%;
-        padding: 20px;
-        margin: 20px;
-      }
-    </style>
-  </head>
+{% extends "base.html" %}
+  {% block title%}
+  Modify File Headings
+  {% endblock %}
 
-  <body>
-    <div id="form-contents">
-      <h2>File:- <span id="filename">{{ filename }}</span></h2>
+  {% block contents %}
+  <div id="form-contents">
+      <span id="fileId" hidden>{{ file_id }}</span>
+      <h2>File:-{{ filename }}</h2>
       {% for head in headings %}
       <div class="headers">
         <br>
@@ -52,8 +29,11 @@
         <option value="Excel">
       </datalist>
 
-    <script>
-      $(document).ready(function () {
+  {% endblock %}
+
+  {% block scripts %}
+  <script>
+  $(document).ready(function () {
         $('#downloadBtn').hide();
         $(".head").prop("readonly", true);
         $("#reorderBtn").click(function () {
@@ -73,8 +53,8 @@
         });
         var output = {};
         let i = 1;        
-        let filename = $("#filename").text();
-        output.filename = filename;
+        let file_id = $("#fileId").text();
+        output.file_id = file_id;
         let header = {};
         $("#applyBtn").click(function () {
           let ext = $("input#extension").val();
@@ -104,13 +84,17 @@
           $.ajax({
             contentType: "application/json",
             data: req_op,
-            url: "/api/modify",
+            url: "/api/v1.0/modify",
             type: "POST",
             success: function (data) {
-                let mod_file = data.modifiedFile;
-                console.log(mod_file);
-                $('#downloadLink').attr('href',`/api/download/${mod_file}`);
+                // let mod_file = data.modifiedFile;
+                // console.log(mod_file);
+                // $('#downloadLink').attr('href',`/api/download/${mod_file}`);
                 $('#downloadBtn').show();
+            },
+            error: function (error) {
+                console.log("Error");
+                console.log(error);
             }
           });
         });
@@ -129,5 +113,4 @@
         });
       });
     </script>
-  </body>
-</html>
+  {% endblock %}

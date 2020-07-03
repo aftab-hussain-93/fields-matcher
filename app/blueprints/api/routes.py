@@ -1,7 +1,7 @@
 import pandas
 import os
 import uuid 
-from .models import File
+from .models import File, UpdatedFile
 from app.blueprints.auth.models import User 
 from app import db, httpauth, bcrypt
 from werkzeug.utils import secure_filename
@@ -13,12 +13,13 @@ api = Blueprint('api',__name__, url_prefix = "/api/v1.0")
 
 @api.route('/upload', methods=['POST'])
 def api_upload():
+    current_user = False
     if 'file' not in request.files:
         resp = {
         'message':'No file part in request'
         }
         status = 400
-        return resp, status
+        return jsonify(resp), status
 
     file = request.files['file']
 
@@ -27,7 +28,7 @@ def api_upload():
             'message':'No file selected for upload'
         }
         status = 400
-        return resp, status
+        return jsonify(resp), status
 
     if file and allowed_file(file.filename):
         file_id = uuid.uuid4().hex
@@ -38,23 +39,29 @@ def api_upload():
                 DIRECTORY = os.path.join(current_app.config['UPLOAD_FOLDER'],current_user.username)
                 path = os.path.join(os.path.normpath(current_app.root_path),DIRECTORY)
                 if not os.path.exists(path):
-                    os.makedirs(path)
-                f = File(filename = file.filename, directory=DIRECTORY, public_id=file_id, user=current_user)
+                    os.makedirs(path)                
             else:
                 resp = {
                     'error':'Invalid or expired token'
                 }
                 status = 400
-                return resp, status
+                return jsonify(resp), status
         else:
             DIRECTORY = current_app.config['TEMP_FILES']
-            f = File(filename = file.filename, directory=DIRECTORY, public_id=file_id)
         
         filename = secure_filename(file.filename)
         file_path = os.path.join(os.path.normpath(current_app.root_path),DIRECTORY,filename)
+        current_app.logger.info("Saving file")
         file.save(file_path)
         file.stream.seek(0)
-        headers, extension = get_file_details(file)
+        headers, extension = get_file_details(file)  
+
+        if current_user:
+            f = File(filename = file.filename, directory=DIRECTORY, public_id=file_id, user=current_user, header_list = headers)
+        else:
+            f = File(filename = file.filename, directory=DIRECTORY, public_id=file_id, header_list = headers)
+
+        current_app.logger.info("Adding file and headers to db.")
         db.session.add(f)
         db.session.commit() 
         headers_w_position = {}
@@ -63,19 +70,20 @@ def api_upload():
                 'header_name' : head,
                 'position' : i
             }
+
         resp = {
             'file_id': file_id,
             'extension' : extension,
             'headers' : headers_w_position
         }
         status = 201
-        return resp, status
+        return jsonify(resp), status
     else:
         resp = {
             'message' : 'File type not allowed'
         }
         status = 400
-        return resp, status
+        return jsonify(resp), status
 
 @api.route('/modify',methods=['POST'])
 def api_modify():
@@ -85,14 +93,17 @@ def api_modify():
     file_id = data.get('file_id')
     if not file_id:
         return {'error':'File ID not provided'}, 400
-    file_obj = File.query.filter_by(public_id=file_id).first()
-    if not file_obj:
+
+    current_file = File.query.filter_by(public_id=file_id).first()
+
+    if not current_file:
         return {'error':'No such file exists.'}, 400
     extension = data.get('extension')
     if not extension:
         return {'error':'Extension not provided.'}, 400
+
     token = request.args.get('token')
-    current_file = File.query.filter_by(public_id = file_id).first()
+
     if token:
         current_user = User.verify_token(token)        
         if current_file.user != current_user:
@@ -120,11 +131,12 @@ def api_modify():
         return {'error':'The maximum position exceeds the range'}, 400
 
       
-    new_name = modify_headers(file_obj, extension, position_dict, header_name_dict)
-    with current_app.app_context():
-        download_folder = os.path.join(os.path.normpath(current_app.root_path), current_app.config['DOWNLOAD_FOLDER'])
-    return send_from_directory(download_folder, new_name, as_attachment=True), 200
-
+    new_file = modify_headers(current_file, extension, position_dict, header_name_dict)
+    db.session.add(new_file)
+    db.session.commit()
+    current_app.logger.info(new_file)
+    download_folder = os.path.join(os.path.normpath(current_app.root_path), new_file.directory)
+    return send_from_directory(download_folder, new_file.filename, as_attachment=True), 200
 
 @httpauth.error_handler
 def unauthorized():

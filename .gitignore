@@ -5,6 +5,5 @@ venv
 notes.txt
 notes2.txt
 uploads
-/app/uploads/
-/app/temp/
-/app/downloads/
+/app/data/
+/app_testing/

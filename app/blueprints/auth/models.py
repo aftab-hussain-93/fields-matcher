@@ -24,6 +24,8 @@ class User(Base):
 
 	uploaded_files = db.relationship('File', backref='user',lazy=True)
 
+	updated_files = db.relationship('UpdatedFile', backref='user',lazy=True)
+
 	def get_login_token(self, expires_sec=1800):
 		s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
 		return s.dumps({'user_id':self.id}).decode('utf-8')
