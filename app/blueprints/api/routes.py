@@ -7,12 +7,13 @@ from app import db, httpauth, bcrypt
 from werkzeug.utils import secure_filename
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from app.utils import modify_headers,  allowed_file, get_file_details
-from flask import Blueprint, send_from_directory, request, current_app, make_response, jsonify
+from flask import Blueprint, send_from_directory, request, current_app, make_response, jsonify, url_for
 
 api = Blueprint('api',__name__, url_prefix = "/api/v1.0")
 
 @api.route('/upload', methods=['POST'])
 def api_upload():
+    DIRECTORY = current_app.config['TEMP_FILES']
     current_user = False
     if 'file' not in request.files:
         resp = {
@@ -46,8 +47,7 @@ def api_upload():
                 }
                 status = 400
                 return jsonify(resp), status
-        else:
-            DIRECTORY = current_app.config['TEMP_FILES']
+            
         
         filename = secure_filename(file.filename)
         file_path = os.path.join(os.path.normpath(current_app.root_path),DIRECTORY,filename)
@@ -136,7 +136,13 @@ def api_modify():
     db.session.commit()
     current_app.logger.info(new_file)
     download_folder = os.path.join(os.path.normpath(current_app.root_path), new_file.directory)
-    return send_from_directory(download_folder, new_file.filename, as_attachment=True), 200
+    filename = new_file.filename
+    if request.is_xhr:
+        current_app.logger.info("Return JSON")
+        return jsonify({'url': url_for('main.download'),
+                        'filename':filename}), 200
+    current_app.logger.info("Returning the NEW FILE")        
+    return send_from_directory(download_folder,filename, as_attachment=True), 200
 
 @httpauth.error_handler
 def unauthorized():

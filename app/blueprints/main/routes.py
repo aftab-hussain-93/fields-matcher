@@ -30,9 +30,11 @@ def modify_file():
     current_app.logger.info(f"Modifying file - {file_id}")
     return render_template('modify.html', headings=headers, file_id=file_id, filename=filename, extension=extension)
 
-@main.route('/api/download/<filename>')
-def api_download(filename):
-    print(f"Downloading file name {filename}")
+@main.route('/download', methods=['POST'])
+def download():
+    print(f"Downloading file name")
+    filename = request.form['filename']
+    # return "hello"
     with current_app.app_context():
         download_folder = os.path.join(os.path.normpath(current_app.root_path), current_app.config['DOWNLOAD_FOLDER'])
     return send_from_directory(download_folder, filename, as_attachment=True)
