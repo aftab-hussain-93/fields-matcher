@@ -7,7 +7,7 @@ from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 @login.user_loader
 def load_user(user_id):
-    return User.get(user_id)
+    return User.query.get(user_id)
 
 
 class Base(db.Model):
@@ -17,12 +17,12 @@ class Base(db.Model):
 	date_created = db.Column(db.DateTime, default=db.func.current_timestamp())
 	date_modified = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
-class User(Base):
+class User(Base, UserMixin):
 	username = db.Column(db.String, nullable=False)
 	password = db.Column(db.String, nullable=False)
 	email = db.Column(db.String, nullable=False)
 
-	uploaded_files = db.relationship('File', backref='user',lazy=True)
+	uploaded_files = db.relationship('File', backref='user',lazy='dynamic')
 
 	updated_files = db.relationship('UpdatedFile', backref='user',lazy=True)
 

@@ -37,7 +37,7 @@ class File(BaseFile):
 		super(File,self).__init__(*args, **kwargs)
 
 	def generate_update_file(self, filename, directory):
-		update_file = UpdatedFile(filename=filename, file=self, public_id=uuid.uuid4().hex, directory=directory, user=self.user)
+		update_file = UpdatedFile(filename=filename, file=self, public_id=uuid.uuid4().hex, directory=directory, user_id=self.user_id)
 		return update_file
 
 
@@ -59,5 +59,5 @@ class UpdatedFile(BaseFile):
 		return f"File - {self.filename} - Directory - {self.directory}"
 
 	def generate_update_file(self, filename, directory):
-		update_file = UpdatedFile(filename=filename, file=self.file, public_id=uuid.uuid4().hex, directory=directory, user=self.user)
+		update_file = UpdatedFile(filename=filename, file_id=self.file_id, public_id=uuid.uuid4().hex, directory=directory, user_id=self.user_id)
 		return update_file

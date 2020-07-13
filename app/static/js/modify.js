@@ -23,6 +23,8 @@ $(document).ready(function () {
         output.file_id = file_id;
         let header = {};
         $("#applyBtn").click(function () {
+          // for
+          // console.log()
           let ext = $("input#extension").val();
           output.extension = ext;
           var elems = $("#form-contents input").map(function (idx, elem) {

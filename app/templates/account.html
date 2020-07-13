@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title%}
+  Account Details
+{% endblock %}
+{% block contents %}
+  {% if current_user.is_authenticated %}
+    <!-- Hello {{current_user.username}} -->
+    <div>
+      <h5>List of all ur uploaded files here.</h5>
+      <hr>
+    </div>
+  {% endif %}
+  <hr>
+  {% for d in files -%}
+  	<div>
+  		
+
+        Filename {{ d['filename']  }} 
+  		<p>  Date Uploaded {{ d['date_created']  }} </p>
+  		<input id="{{ d['file_id'] }}" type="button" value="Modify File" class="modifyBtn">
+  		<div>
+  			 Updated Files -
+  			 {% for f in d['updated_versions'] %}
+  			 <p>
+  			 	<p>  Version {{ f['version']  }} </p>
+  				<p>  Date Updated {{ f['date_created']  }} </p>
+  			 </p>
+  			 <input id="{{ f['file_id'] }}" type="button" value="Modify File" class="modifyBtn">
+  			 {% endfor %}
+  		</div> 
+  	</div>
+  	<hr>
+  {%- endfor %}
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+	$(".modifyBtn").click(function () {
+	console.log("Button clicked");
+	console.log(this.id);
+	var form = $('<form style="display:none;" action="/modify" method="post">' +
+	        '<input type="text" name="file_id" value="' + this.id + '"  />' +
+	      '</form>')
+	      $('body').append(form);
+	      form.submit();
+        });
+	
+</script>
+{% endblock %}
+
+

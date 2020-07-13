@@ -3,31 +3,85 @@
   <head>
     <meta charset="utf-8">
     <title>{% block title %}
-    	   {% endblock %}
+    {% endblock %}
     </title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='jqueryui/jquery-ui.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='jqueryui/jquery-ui.structure.css') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='jqueryui/jquery-ui.theme.css') }}"
-    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='jqueryui/jquery-ui.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='jqueryui/jquery-ui.structure.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='jqueryui/jquery-ui.theme.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='jqueryui/jquery-ui.js') }}"></script>
-    <!-- Custom styles for this template -->
-    <!-- <link href="cover.css" rel="stylesheet"> -->
-  </head>
-{% block contents %}
-{% endblock %}
-{% block scripts %}
-{% endblock %}
-</body>
-</html>
+          <!-- Custom styles for this template -->
+          <!-- <link href="cover.css" rel="stylesheet"> -->
+        </head>
+        <body>
+          <header id="main-header">
+            <nav class="navbar navbar-expand-md bg-dark navbar-dark">
+              <a class="navbar-brand" href="{{ url_for('main.home') }}">My Website</a>
+              <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+              <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav ml-auto">
+                  {% if current_user.is_anonymous %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ url_for('auth.register') }}">Register</a>
+                    </li>
+                  {% else %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="{{ url_for('auth.profile', user=current_user.username) }}">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                      <button  type="button" class="btn btn-link nav-link" data-toggle="modal" data-target="#exampleModalCenter">
+                      Logout
+                      </button>
+                    </li>
+                  {% endif %}
+                </ul>
+              </div>
+            </nav>
+          </header>
+         <div class="col-md-8">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+        </div>     
+        {% block contents %}
+        {% endblock %}
+        {% block scripts %}
+        {% endblock %}
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                Logging out user
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <a class="btn btn-primary"  href="{{ url_for('auth.logout') }}" role="button">Logout User</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </body>
+    </html>

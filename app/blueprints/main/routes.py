@@ -1,21 +1,23 @@
 # from main import main
-from flask import (send_from_directory, request, session, 
-                    current_app, redirect, url_for, render_template)
-from app.utils import  get_file_headers, modify_headers, allowed_file
+from flask import (Blueprint, send_from_directory, request, session, 
+                    current_app, redirect, url_for, render_template, flash)
+from app.utils import  get_file_headers, modify_headers, allowed_file, get_user_files
 from app.blueprints.api.routes import api
-from app.blueprints.api.models import File
-from flask import Blueprint
+from app.blueprints.api.models import File, UpdatedFile
+from flask_login import current_user
 import os
+import json
 
 main = Blueprint('main',__name__)
 
 @main.route('/index', methods = ['GET'])
 @main.route('/', methods = ['GET'])
-def upload_file():
+def home():
     """
     Home page to upload the file. The file upload is handled by JQuery AJAX Form.
     """
-    current_app.logger.info("In home page")
+    if current_user.is_authenticated:
+        flash(f'Hello {current_user.username}', category='info')
     return render_template('home.html')
 
 @main.route('/modify', methods=['POST'])
@@ -25,6 +27,8 @@ def modify_file():
     """
     file_id = request.form['file_id']
     current_file = File.query.filter_by(public_id=file_id).first()
+    if not current_file:
+        current_file = UpdatedFile.query.filter_by(public_id=file_id).first()
     filename = current_file.filename
     headers, extension = get_file_headers(current_file)
     current_app.logger.info(f"Modifying file - {file_id}")

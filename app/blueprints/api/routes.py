@@ -6,8 +6,9 @@ from app.blueprints.auth.models import User
 from app import db, httpauth, bcrypt
 from werkzeug.utils import secure_filename
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from app.utils import modify_headers,  allowed_file, get_file_details
-from flask import Blueprint, send_from_directory, request, current_app, make_response, jsonify, url_for
+from app.utils import modify_headers,  allowed_file, get_file_details, get_file_headers, get_user_files
+from flask import Blueprint, send_from_directory, request, current_app, make_response, jsonify, url_for, session
+from flask_login import current_user
 
 api = Blueprint('api',__name__, url_prefix = "/api/v1.0")
 
@@ -34,21 +35,26 @@ def api_upload():
     if file and allowed_file(file.filename):
         file_id = uuid.uuid4().hex
         token = request.args.get('token')
+        username = session.get('username')
+
         if token:
             current_user = User.verify_token(token)
-            if current_user:
-                DIRECTORY = os.path.join(current_app.config['UPLOAD_FOLDER'],current_user.username)
-                path = os.path.join(os.path.normpath(current_app.root_path),DIRECTORY)
-                if not os.path.exists(path):
-                    os.makedirs(path)                
-            else:
-                resp = {
-                    'error':'Invalid or expired token'
-                }
-                status = 400
-                return jsonify(resp), status
+        elif username:
+            current_user = User.query.filter_by(username=username).first()
+
+        if current_user:
+            DIRECTORY = os.path.join(current_app.config['UPLOAD_FOLDER'],current_user.username)
+            path = os.path.join(os.path.normpath(current_app.root_path),DIRECTORY)
+            if not os.path.exists(path):
+                os.makedirs(path)                
+        else:
+            resp = {
+                'error':'Invalid or expired token'
+            }
+            status = 400
+            return jsonify(resp), status                
+
             
-        
         filename = secure_filename(file.filename)
         file_path = os.path.join(os.path.normpath(current_app.root_path),DIRECTORY,filename)
         current_app.logger.info("Saving file")
@@ -89,46 +95,63 @@ def api_upload():
 def api_modify():
     data = request.get_json()
     if not data:
-        return {'error':'No data provided'}, 400
+        return jsonify({'error':'No data provided'}), 400
     file_id = data.get('file_id')
     if not file_id:
-        return {'error':'File ID not provided'}, 400
+        return jsonify({'error':'File ID not provided'}), 400
 
     current_file = File.query.filter_by(public_id=file_id).first()
 
     if not current_file:
-        return {'error':'No such file exists.'}, 400
+        current_file = UpdatedFile.query.filter_by(public_id=file_id).first()
+        if not current_file:
+           return jsonify({'error':'No such file exists.'}), 400
+
     extension = data.get('extension')
     if not extension:
-        return {'error':'Extension not provided.'}, 400
+        return jsonify({'error':'Extension not provided.'}), 400
 
     token = request.args.get('token')
+    username = session.get('username')
 
     if token:
-        current_user = User.verify_token(token)        
-        if current_file.user != current_user:
-            return {'error':'Incorrect token provided'}, 400
+            current_user = User.verify_token(token)
+    elif username:
+            current_user = User.query.filter_by(username=username).first()
     else:
         if current_file.user:
-            return {'error':'File belongs to user. Please provide token'}, 400
+            return jsonify({'error':'File belongs to user. Please provide token'}), 400
+    
+    if current_user:          
+        if current_file.user != current_user:
+            return jsonify({'error':'Incorrect token provided'}), 400
+
     headers = data['headers']
     position_dict = {}
     header_name_dict = {}
     for head, details in headers.items():
         header_name_dict[head] = details['header_name']
         position_dict[head] = details['position']
+
+    if len(header_name_dict.values()) != len(set(header_name_dict.values())):
+        resp = {
+            'message' : 'Two headers cannot have the same name.'
+        }
+        status = 400
+        return jsonify(resp), status
+
     if len(position_dict.values()) != len(set(position_dict.values())):
         resp = {
             'message' : 'The position values provided are overlapping.'
         }
         status = 400
-        return resp, status
+        return jsonify(resp), status
 
     if any(i<=0 for i in position_dict.values()):
-        return {'error':'The positions must contain values > 0'}, 400
+        return jsonify({'error':'The positions must contain values > 0'}), 400
 
     if max(position_dict.values()) > len(position_dict.values()):
-        return {'error':'The maximum position exceeds the range'}, 400
+        return jsonify({'error':'The maximum position exceeds the range'}), 400
 
       
     new_file = modify_headers(current_file, extension, position_dict, header_name_dict)
@@ -150,16 +173,78 @@ def unauthorized():
 
 @httpauth.verify_password
 def verify_password(username, password):
-    if username:
-        user = User.query.filter_by(username=username).first()
-        if bcrypt.check_password_hash(user.password, password):
-            return user
+    user = User.query.filter_by(username=username).first()
+    return user
+    # if username:
+    #     user = User.query.filter_by(username=username).first()
+    #     if bcrypt.check_password_hash(user.password, password):
+    #         return user
 
 @api.route('/login')
 @httpauth.login_required
 def api_login():
-    usr = httpauth.current_user()
-    token = usr.get_login_token()
-    return {
-        'token' : token
+    user = httpauth.current_user()
+
+    all_file_list = get_user_files(user)
+
+    print(all_file_list)
+
+    token = user.get_login_token()
+    return jsonify({
+        'token' : token,
+        'all_files' : all_file_list
+    }), 200
+
+
+@api.route('/file/<file_id>')
+def file_details(file_id):
+
+    token = request.args.get('token')
+    username = session.get('username')
+
+    if token:
+            current_user = User.verify_token(token)
+    elif username:
+            current_user = User.query.filter_by(username=username).first()
+    else:
+        return jsonify({'error':'login credentials not provided'}), 400
+
+    parent_file = False
+    current_file = File.query.filter_by(public_id=file_id).first()
+
+    if not current_file:
+        current_file = UpdatedFile.query.filter_by(public_id=file_id).first()
+        if not current_file:
+            return jsonify({'error':'No such file exists'}), 400
+        parent_file = current_file.file
+
+    if current_file.user != current_user:
+        return jsonify({'error':'Incorrect token provided'}), 400
+
+    headers, extension = get_file_headers(current_file)
+    headers_w_position = {}
+    for i,head in enumerate(headers,start=1):
+            headers_w_position[head] = {
+                'header_name' : head,
+                'position' : i
+            }
+
+    child ={}
+    all_children = []
+    if not parent_file:
+        for f in current_file.updated_files:
+            child['filename'] = f.filename
+            child['date-created'] = f.date_created
+            all_children.append(child)
+
+    resp = {
+        'file_id': file_id,
+        'filename' : current_file.filename,
+        'children' : all_children,
+        'parent' : parent_file.filename if parent_file else "No Parent",
+        'extension' : extension,
+        'headers' : headers_w_position
     }
+    status = 201
+    return jsonify(resp), status
+
