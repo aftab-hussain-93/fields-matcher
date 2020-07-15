@@ -16,8 +16,6 @@ def home():
     """
     Home page to upload the file. The file upload is handled by JQuery AJAX Form.
     """
-    if current_user.is_authenticated:
-        flash(f'Hello {current_user.username}', category='info')
     return render_template('home.html')
 
 @main.route('/modify', methods=['POST'])

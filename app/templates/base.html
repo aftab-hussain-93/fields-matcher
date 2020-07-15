@@ -48,7 +48,7 @@
               </div>
             </nav>
           </header>
-         <div class="col-md-8">
+        <div class="container">
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
               {% for category, message in messages %}
@@ -58,9 +58,10 @@
               {% endfor %}
             {% endif %}
           {% endwith %}
-        </div>     
-        {% block contents %}
-        {% endblock %}
+          {% block contents %}
+          {% endblock %}
+        </div>   
+
         {% block scripts %}
         {% endblock %}
         <!-- Modal -->

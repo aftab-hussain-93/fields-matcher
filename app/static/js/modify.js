@@ -1,9 +1,9 @@
 $(document).ready(function () {
         var download_form;
         $('#downloadBtn').hide();
-        $(".head").prop("readonly", true);
+        $(".head").prop("disabled", true);
         $("#reorderBtn").click(function () {
-          $(".head").prop("readonly", true);
+          $(".head").prop("disabled", true);
           if ($("#form-contents").data("uiSortable")) {
             $("#form-contents").sortable("enable");
           }
@@ -12,7 +12,7 @@ $(document).ready(function () {
           }
         });
         $("#renameBtn").click(function () {
-          $(".head").prop("readonly", false);
+          $(".head").prop("disabled", false);
           if ($("#form-contents").data("uiSortable")) {
             $("#form-contents").sortable("disable");
           }
@@ -44,7 +44,7 @@ $(document).ready(function () {
           output.headers = header;
           req_op = JSON.stringify(output);
           i = 1;
-          $(".head").prop("readonly", true);
+          $(".head").prop("disabled", true);
           if ($("#form-contents").data("uiSortable")) {
             $("#form-contents").sortable("disable");
           }

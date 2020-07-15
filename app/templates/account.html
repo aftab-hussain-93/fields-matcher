@@ -3,48 +3,54 @@
   Account Details
 {% endblock %}
 {% block contents %}
-  {% if current_user.is_authenticated %}
-    <!-- Hello {{current_user.username}} -->
-    <div>
-      <h5>List of all ur uploaded files here.</h5>
-      <hr>
+  <div class="row justify-content-around">
+      <div class="col-xs-6">
+        <h3>Original Uploads</h3>
+      </div>
+      <div class="col-xs-6">
+        <h3>Updated Version</h3>
+      </div>
     </div>
-  {% endif %}
-  <hr>
-  {% for d in files -%}
-  	<div>
-  		
-
-        Filename {{ d['filename']  }} 
-  		<p>  Date Uploaded {{ d['date_created']  }} </p>
-  		<input id="{{ d['file_id'] }}" type="button" value="Modify File" class="modifyBtn">
-  		<div>
-  			 Updated Files -
-  			 {% for f in d['updated_versions'] %}
-  			 <p>
-  			 	<p>  Version {{ f['version']  }} </p>
-  				<p>  Date Updated {{ f['date_created']  }} </p>
-  			 </p>
-  			 <input id="{{ f['file_id'] }}" type="button" value="Modify File" class="modifyBtn">
-  			 {% endfor %}
-  		</div> 
-  	</div>
-  	<hr>
-  {%- endfor %}
+    <hr>
+  {% for d in files %}
+    <div class="row justify-content-around">
+      <div class="col-xs-6">
+        <p>Filename {{ d['filename']  }}</p>
+        <p>  Date Uploaded {{ d['date_created']  }} </p>
+        <input id="{{ d['file_id'] }}" type="button" value="View" class="modifyBtn">
+        <input id="" type="button" value="Download" class="">
+      </div>
+      <div class="col-xs-6 d-flex flex-column">   
+      {% if d['updated_versions'] %}    
+          {% for f in d['updated_versions'] %}
+            <p> 
+                Version {{ f['version']  }} <br>
+                Date Updated {{ f['date_created']  }} 
+            </p>
+            <div>
+              <input id="{{ f['file_id'] }}" type="button" value="View" class="modifyBtn">
+              <input id="" type="button" value="Download" class="">
+            </div>            
+          {% endfor %}
+        {% else %}
+        <p style="font-size: 18px;">This file has not been updated.. </p>
+        {% endif %}
+      </div>
+    </div>
+    <hr>
+  {% endfor %}
 {% endblock %}
 {% block scripts %}
-<script type="text/javascript">
-	$(".modifyBtn").click(function () {
-	console.log("Button clicked");
-	console.log(this.id);
-	var form = $('<form style="display:none;" action="/modify" method="post">' +
-	        '<input type="text" name="file_id" value="' + this.id + '"  />' +
-	      '</form>')
-	      $('body').append(form);
-	      form.submit();
-        });
-	
-</script>
+  <script type="text/javascript">
+  $(".modifyBtn").click(function () {
+  console.log("Button clicked");
+  console.log(this.id);
+  var form = $('<form style="display:none;" action="/modify" method="post">' +
+    '<input type="text" name="file_id" value="' + this.id + '"  />' +
+  '</form>')
+  $('body').append(form);
+  form.submit();
+  });
+  
+  </script>
 {% endblock %}
-
-

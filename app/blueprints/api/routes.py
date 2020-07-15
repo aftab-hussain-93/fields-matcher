@@ -196,6 +196,30 @@ def api_login():
     }), 200
 
 
+@api.route('/register', methods=['POST'])
+def api_register():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
+    email = data.get('email')
+    if not username or not password or not email:
+        return jsonify({'error':'no username provided'}), 400
+
+    user = User.query.filter_by(username=username).first()
+    if user:
+        return jsonify({'error':'Invalid username. Already exists.'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if user:
+        return jsonify({'error':'Invalid email address. Already exists.'}), 400
+
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    new_user = User(username=username, email=email, password=hashed_password)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message' : f'User {username} is created.'}), 201
+
 @api.route('/file/<file_id>')
 def file_details(file_id):
 

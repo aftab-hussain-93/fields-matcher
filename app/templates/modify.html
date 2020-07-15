@@ -1,33 +1,32 @@
 {% extends "base.html" %}
-  {% block title%}
+{% block title%}
   Modify File Headings
-  {% endblock %}
-
-  {% block contents %}
-  <div id="form-contents">
-      <span id="fileId" hidden>{{ file_id }}</span>
-      <h2>File:-{{ filename }}</h2>
-      {% for head in headings %}
+{% endblock %}
+{% block contents %}
+<h4>File: {{ filename }}</h4>
+<div class="row justify-content-around">
+  <div class="col-xs-6" id="form-contents">
+    <span id="fileId" hidden>{{ file_id }}</span>
+    {% for head in headings %}
       <div class="headers">
-<!--         <br>
- -->        <input type="text" id = "{{ head }}" class = "head" value= "{{ head }}" style="border: transparent;">
-<!--         <br>
- -->      </div>
-      {% endfor %}
-    </div>
+        <input type="text" id = "{{ head }}" class = "head" value= "{{ head }}">
+      </div>
+    {% endfor %}
+  </div>
+  <div class="col-xs-6 d-flex flex-column justify-content-center">
     <button id="downloadBtn">Download</button>
     <input type="button" value="Save Changes" id="applyBtn" />
     <input type="button" value="Reorder Columns" id="reorderBtn" />
     <input type="button" value="Rename Headers" id="renameBtn" />
-
-      <label for="extension">File output type : </label>
-      <input list="extensionList" name="extensionList" id="extension" value="CSV"/>
-      <datalist id="extensionList">
-        <option value="CSV">
-        <option value="Excel">
-      </datalist>
-
+    <label for="extension">File output type : </label>
+    <input list="extensionList" name="extensionList" id="extension"/>
+    <datalist id="extensionList">
+      <option value="CSV">
+      <option value="Excel">
+    </datalist>
+  </div>
+</div>
   {% endblock %}
   {% block scripts %}
-  <script src="{{ url_for('static', filename='js/modify.js')}}"></script>
+    <script src="{{ url_for('static', filename='js/modify.js')}}"></script>
   {% endblock %}
