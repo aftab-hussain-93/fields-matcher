@@ -6,9 +6,11 @@ $(document).ready(function () {
           $(".head").prop("disabled", true);
           if ($("#form-contents").data("uiSortable")) {
             $("#form-contents").sortable("enable");
+            console.log("Here1");
           }
           else{
-          $("#form-contents").sortable();
+          $("#form-contents").sortable({cancel:null});
+          console.log("Here2");
           }
         });
         $("#renameBtn").click(function () {
@@ -25,7 +27,7 @@ $(document).ready(function () {
         $("#applyBtn").click(function () {
           // for
           // console.log()
-          let ext = $("input#extension").val();
+          let ext = $("select#extension").val();
           output.extension = ext;
           var elems = $("#form-contents input").map(function (idx, elem) {
             if($(elem).hasClass("head")){
