@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title%}
+  Home
+{% endblock %}
+{% block contents %}
+ {% if current_user.is_authenticated %}
+       <br><h4>Hello, {{current_user.username}} !</h4>
+{% endif %}
+  <form method="POST" enctype="multipart/form-data">
+     {{ form.hidden_tag() }}
+    <fieldset class="form-group">
+      <legend class="border-bottom mt-10 mb-4">Upload Form</legend>
+     <div class="form-group">
+      {{ form.file.label() }}
+      {{ form.file(class="form-control-file") }}
+      {% if form.file.errors %}
+          {% for error in form.file.errors %}
+              <span class="text-danger">{{ error }}</span></br>
+          {% endfor %}
+      {% endif %}
+    </div>
+    <div class="form-group">
+      {{ form.submit(class="btn btn-outline-info") }}
+    </div>
+   </fieldset>
+  </form>
+{% endblock %}

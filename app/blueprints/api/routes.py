@@ -2,7 +2,7 @@ import pandas
 import os
 import uuid 
 from .models import File, UpdatedFile
-from app.blueprints.auth.models import User 
+from app.blueprints.auth.models import User
 from app import db, httpauth, bcrypt
 from werkzeug.utils import secure_filename
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -46,21 +46,20 @@ def api_upload():
             DIRECTORY = os.path.join(current_app.config['UPLOAD_FOLDER'],current_user.username)
             path = os.path.join(os.path.normpath(current_app.root_path),DIRECTORY)
             if not os.path.exists(path):
-                os.makedirs(path)                
+                os.makedirs(path)
         else:
             resp = {
                 'error':'Invalid or expired token'
             }
             status = 400
-            return jsonify(resp), status                
+            return jsonify(resp), status
 
-            
         filename = secure_filename(file.filename)
         file_path = os.path.join(os.path.normpath(current_app.root_path),DIRECTORY,filename)
         current_app.logger.info("Saving file")
         file.save(file_path)
         file.stream.seek(0)
-        headers, extension = get_file_details(file)  
+        headers, extension = get_file_details(file)
 
         if current_user:
             f = File(filename = file.filename, directory=DIRECTORY, public_id=file_id, user=current_user, header_list = headers)
@@ -69,7 +68,7 @@ def api_upload():
 
         current_app.logger.info("Adding file and headers to db.")
         db.session.add(f)
-        db.session.commit() 
+        db.session.commit()
         headers_w_position = {}
         for i,head in enumerate(headers,start=1):
             headers_w_position[head] = {
@@ -96,16 +95,16 @@ def api_modify():
     data = request.get_json()
     if not data:
         return jsonify({'error':'No data provided'}), 400
-    file_id = data.get('file_id')
-    if not file_id:
-        return jsonify({'error':'File ID not provided'}), 400
+    # file_id = data.get('file_id')
+    # if not file_id:
+    #     return jsonify({'error':'File ID not provided'}), 400
 
-    current_file = File.query.filter_by(public_id=file_id).first()
+    # current_file = File.query.filter_by(public_id=file_id).first()
 
-    if not current_file:
-        current_file = UpdatedFile.query.filter_by(public_id=file_id).first()
-        if not current_file:
-           return jsonify({'error':'No such file exists.'}), 400
+    # if not current_file:
+    #     current_file = UpdatedFile.query.filter_by(public_id=file_id).first()
+    #     if not current_file:
+    #        return jsonify({'error':'No such file exists.'}), 400
 
     extension = data.get('extension')
     if not extension:
@@ -121,8 +120,8 @@ def api_modify():
     else:
         if current_file.user:
             return jsonify({'error':'File belongs to user. Please provide token'}), 400
-    
-    if current_user:          
+
+    if current_user:
         if current_file.user != current_user:
             return jsonify({'error':'Incorrect token provided'}), 400
 
@@ -153,10 +152,10 @@ def api_modify():
     if max(position_dict.values()) > len(position_dict.values()):
         return jsonify({'error':'The maximum position exceeds the range'}), 400
 
-      
+
     new_file = modify_headers(current_file, extension, position_dict, header_name_dict)
-    db.session.add(new_file)
-    db.session.commit()
+    # db.session.add(new_file)
+    # db.session.commit()
     current_app.logger.info(new_file)
     download_folder = os.path.join(os.path.normpath(current_app.root_path), new_file.directory)
     filename = new_file.filename
@@ -164,7 +163,7 @@ def api_modify():
         current_app.logger.info("Return JSON")
         return jsonify({'url': url_for('main.download'),
                         'filename':filename}), 200
-    current_app.logger.info("Returning the NEW FILE")        
+    current_app.logger.info("Returning the NEW FILE")
     return send_from_directory(download_folder,filename, as_attachment=True), 200
 
 @httpauth.error_handler

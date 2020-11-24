@@ -1,6 +1,6 @@
 from app import db
 from flask import current_app
-import os, uuid 
+import os, uuid
 
 class Base(db.Model):
 	__abstract__ = True
@@ -16,13 +16,12 @@ class BaseFile(Base):
 	public_id = db.Column(db.String(40), unique=True)
 	directory = db.Column(db.String, nullable=False)
 
-	@property	
+	@property
 	def file_path(self):
 		return os.path.join(os.path.normpath(current_app.root_path), self.directory, self.filename)
 
-class File(BaseFile):			
+class File(BaseFile):
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
 	heading = db.relationship('Heading', backref='file', lazy=True)
 	updated_files = db.relationship('UpdatedFile', backref='file', lazy=True)
 
@@ -36,8 +35,8 @@ class File(BaseFile):
 				self.heading.append(head)
 		super(File,self).__init__(*args, **kwargs)
 
-	def generate_update_file(self, filename, directory):
-		update_file = UpdatedFile(filename=filename, file=self, public_id=uuid.uuid4().hex, directory=directory, user_id=self.user_id)
+	def generate_update_file(self, public_id, file_path):
+		update_file = UpdatedFile(filename = self.filename, file=self, public_id= public_id, directory=file_path, user_id=self.user_id)
 		return update_file
 
 
@@ -47,7 +46,7 @@ class Heading(Base):
 	file_id = db.Column(db.Integer, db.ForeignKey('file.id'))
 
 	def __repr__(self):
-		return f"Heading"
+		return f"Heading for file - {self.file_id}"
 
 class UpdatedFile(BaseFile):
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

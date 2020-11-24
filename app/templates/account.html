@@ -3,6 +3,7 @@
   Account Details
 {% endblock %}
 {% block contents %}
+{% set active_page = active_page|default('profile') -%}
   <div class="account-heading row justify-content-around">
       <div class="col-xs-6">
         <h3>Original Uploads</h3>

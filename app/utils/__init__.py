@@ -31,6 +31,12 @@ def get_file_details(file_obj):
     headers = df.columns.to_list()
     return headers, ext
 
+# def modify_headers(extension, position_dict, name_dict):
+#     file_path = session['file_path']
+#     filename = session['file_name']
+
+
+
 def modify_headers(current_file, extension, position_dict, name_dict):
     filename = current_file.filename
     new_header_ls = [x[0] for x in sorted(position_dict.items(), key=lambda x:x[1])]
