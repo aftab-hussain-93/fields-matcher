@@ -1,13 +1,16 @@
 import os
+import json
 # UPLOADS_FOLDER = r'D:\development\project - fields matcher\uploads'
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
+with open('/etc/config.json') as config_file:
+	config = json.load(config_file)
 
 class Config:
-	SECRET_KEY = 'secret key'
+	SECRET_KEY = config.get('SECRET_KEY')
 	# SQLALCHEMY_DATABASE_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
-	SQLALCHEMY_DATABASE_URI = r"sqlite:///D:\development\project - fields matcher\app\test.db"
+	SQLALCHEMY_DATABASE_URI = r"sqlite:///test.db"
 	UPLOAD_FOLDER = ".data/uploads"
 	DOWNLOAD_FOLDER = "./data/downloads"
 	MAX_CONTENT_LENGTH = 16 * 1024 * 102
