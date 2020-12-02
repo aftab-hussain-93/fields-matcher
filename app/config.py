@@ -13,7 +13,7 @@ class Config:
    DOWNLOAD_FOLDER = "fieldsmatcher/downloads/"
    MAX_CONTENT_LENGTH = 4 * 1024 * 1024 # 4 mb file
    TEMP_FILES = "fieldsmatcher/tempfiles/"
-   MONGO_URI = os.environ.get('MONGO_URI')
+   MONGO_URI = config.get('MONGO_URI') or os.environ.get('MONGO_URI')
    UPLOAD_EXTENSIONS = ['.csv','.xls','.xlsx','.json']
    AWS_SECRET_ACCESS_KEY = config.get('AWS_SECRET_ACCESS_KEY') or os.environ.get('AWS_SECRET_ACCESS_KEY')
    AWS_ACCESS_KEY_ID = config.get('AWS_ACCESS_KEY_ID') or os.environ.get('AWS_ACCESS_KEY_ID')
