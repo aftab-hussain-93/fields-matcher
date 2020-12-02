@@ -8,3 +8,4 @@ uploads
 /app/data/
 /app_testing/
 env
+.env

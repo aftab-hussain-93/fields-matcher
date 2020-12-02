@@ -66,45 +66,46 @@ const downloadFile = (extension) => {
           },
           body: JSON.stringify(output)
     })
-    .then(res => res.json())
+    .then(res => {
+      console.log(res)
+     return res.json()
+    })
     .then(data => {
+      console.log("Post modification request")
       console.log(data)
-      if(data.path){
-        let filePath = data.path;
-        let fileName = data.filename;
+
+      if(data.key){
+        let filePath = data.key;
+        let attachementName = data.attachment_name;
         let downloadForm = document.getElementById("downloadForm");
         let filePathElem = document.createElement("input");
-        let fileNameElem = document.createElement("input");
+        let attachmentNameElem = document.createElement("input");
+
         filePathElem.value=filePath;
-        filePathElem.name="path";
+        filePathElem.name="key";
         downloadForm.appendChild(filePathElem);
 
-        fileNameElem.value=fileName;
-        fileNameElem.name="filename";
-        downloadForm.appendChild(fileNameElem);
+        attachmentNameElem.value=attachementName;
+        attachmentNameElem.name="attachment_name";
+        downloadForm.appendChild(attachmentNameElem);
+
         console.log("Submitting download form")
         downloadForm.submit();
-        console.log("Form submitted")
-        downloadForm.reset();
-         setTimeout(function() {
-              window.location.replace("/index");
-            }, 500);
+
+        // Redirecting back to home page after file has been downloaded.
+        setTimeout(function() {
+            window.location.replace("/index");
+          }, 800);
       }else{
         console.log("Could not download")
       }
     })
-    .catch(data => console.log("error"))
-
-
-
-    // download_form = $('<form style="display:none;" action="'+ data.url +'" method="post">' +
-    //             '<input type="text" name="filename" value="' + data.filename + '"  />' +
-    //             '</form>');
+    .catch(data => console.log(`error ${data}`))
 }
 
 
 
-
+// JQuery code for grabbing and re-ordering of the headers
 $(document).ready(function () {
         let download_form;
 

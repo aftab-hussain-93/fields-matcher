@@ -34,7 +34,7 @@
       <h4>Download File</h4>
       <div class="file-downloader">
         <button class="btn btn-outline-dark btn-sm" onclick="downloadFile('csv')">Download as CSV</button>
-        <button class="btn btn-outline-dark btn-sm" onclick="downloadFile('excel')">Download as EXCEL</button>
+        <button class="btn btn-outline-dark btn-sm" onclick="downloadFile('xlsx')">Download as EXCEL</button>
         <button class="btn btn-outline-dark btn-sm" onclick="downloadFile('json')">Download as JSON</button>
         <!-- <button class="btn btn-outline-dark btn-sm">Convert to Delimitted Text - Choose Delimiter - </button> -->
       </div>
@@ -51,5 +51,5 @@
 </div>
 {% endblock %}
 {% block scripts %}
-  <script src="{{ url_for('static', filename='js/modify2.js')}}"></script>
+  <script src="{{ url_for('static', filename='js/modify.js')}}"></script>
 {% endblock %}
