@@ -4,8 +4,8 @@ import json
 basedir = os.path.abspath(os.path.dirname(__file__))
 config = {}
 
-# with open('/etc/config.json') as config_file:
-# 	config = json.load(config_file)
+with open('/etc/config.json') as config_file:
+	config = json.load(config_file)
 
 class Config:
    SECRET_KEY = config.get('SECRET_KEY') or os.environ.get('SECRET_KEY')
