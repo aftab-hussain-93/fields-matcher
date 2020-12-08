@@ -20,18 +20,6 @@
 					{% endif %}
 				</div>
 				<div class="form-group">
-					{% if form.username.errors %}
-						{{ form.username(class="form-control form-control-sm is-invalid") }}
-						<div class="invalid-feedback">
-							{% for error in form.username.errors %}
-								<span>{{ error }}</span>
-							{% endfor %}
-						</div>
-					{% else %}
-						{{ form.username(class="form-control form-control-sm", size=50, placeholder="Username") }}
-					{% endif %}
-				</div>
-				<div class="form-group">
 					{% if form.password.errors %}
 						{{ form.password(class="form-control form-control-sm is-invalid") }}
 						<div class="invalid-feedback">
@@ -61,7 +49,7 @@
 				<input class="btn btn-primary" type="reset">
 			</div>
 			<small class="text-muted ml-2">
-			<a href="{{ url_for('auth.request_reset') }}">Forgot Password?</a>
+			<a {# href="{{ url_for('auth.request_reset') }}" #}>Forgot Password?</a>
 			</small>
 		</form>
 		 <div class="border-top pt-3">

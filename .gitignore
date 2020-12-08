@@ -9,3 +9,4 @@ uploads
 /app_testing/
 env
 .env
+ui/node_modules/

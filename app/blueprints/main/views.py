@@ -5,6 +5,7 @@ from flask import (Blueprint, send_from_directory, request, session,
 from flask_login import current_user
 from app.blueprints.main.forms import UploadForm
 from app.extensions import mongo
+from app.models import User
 from app.utils.aws_utils import AWSBucket
 from app.utils.file_manipulation import File
 
@@ -21,13 +22,9 @@ def home():
 		current_app.logger.info("Form validated")
 		uploaded_file = form.file.data
 
-		curr_user = {
-			'public_id' : 3
-		}
-
-		if True: #current_user.is_authenticated:
-			file_path = current_app.config['UPLOAD_FOLDER'] + f'{curr_user["public_id"]}/'
-			user_id = curr_user['public_id']
+		if current_user.is_authenticated:
+			file_path = current_app.config['UPLOAD_FOLDER'] + f'{current_user.public_id}/'
+			user_id = current_user.public_id
 		else:
 			file_path = current_app.config['TEMP_FILES']
 			user_id = None
@@ -43,8 +40,23 @@ def home():
 		file_collection = mongo.db.uploaded_files
 		_id = file_collection.insert_one(file_document_dict)
 		current_app.logger.info(f"File added to Database\nID - {_id.inserted_id}")
-		return render_template('dashboard.html', headings=file_document_dict['headers'], file_id=_id.inserted_id, filename=file_document_dict['original_filename'])
+		if current_user.is_authenticated:
+			current_user.add_file_to_user(_id.inserted_id)
+		return redirect(url_for('main.file_details', file_id=_id.inserted_id))
 	return render_template('index.html', form=form)
+
+@main.route('/file/<file_id>')
+def file_details(file_id):
+	current_file = mongo.db.uploaded_files.find_one({'_id': ObjectId(file_id)})
+	if current_file['user_id']:
+		if current_user.is_anonymous:
+			abort(401)
+		else:
+			if current_user.public_id != current_file['user_id']:
+				abort(401)
+	elif current_user.is_authenticated:
+		abort(401)
+	return render_template('dashboard.html', headings=current_file['headers'], file_id=file_id, filename=current_file['original_filename'])
 
 @main.route('/testing')
 def testing():

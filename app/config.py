@@ -4,8 +4,11 @@ import json
 basedir = os.path.abspath(os.path.dirname(__file__))
 config = {}
 
-with open('/etc/config.json') as config_file:
-	config = json.load(config_file)
+try:
+   with open('/etc/config.json') as config_file:
+      config = json.load(config_file)
+except FileNotFoundError:
+   pass
 
 class Config:
    SECRET_KEY = config.get('SECRET_KEY') or os.environ.get('SECRET_KEY')
@@ -19,7 +22,7 @@ class Config:
    AWS_ACCESS_KEY_ID = config.get('AWS_ACCESS_KEY_ID') or os.environ.get('AWS_ACCESS_KEY_ID')
    AWS_BUCKET = "lunaflaskbucket"
    AWS_REGION = "ap-south-1"
-   
+
 
 
 	   #  SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'

@@ -1,14 +1,20 @@
 from flask_login import LoginManager
-# from flask_httpauth import HTTPBasicAuth
-# from flask_bcrypt import Bcrypt
-# from flask_mail import Mail
 
-login = LoginManager()
-login.login_view = 'auth.login'
-login.login_message_category = 'info'
+login_manager = LoginManager()
+login_manager.login_view = 'auth.login'
+login_manager.login_message_category = 'info'
+
+# from flask_httpauth import HTTPBasicAuth
 # httpauth = HTTPBasicAuth()
-# bcrypt = Bcrypt()
+
+# from flask_mail import Mail
 # mail = Mail()
+
+
+
+from flask_bcrypt import Bcrypt
+bcrypt = Bcrypt()
+
 
 from flask_pymongo import PyMongo
 
