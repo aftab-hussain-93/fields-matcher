@@ -11,7 +11,8 @@ body {
   font-size:16px;
   line-height: 1.6em;
   background-color: #FFFFFF;
-  padding-top: 60px;
+  /* padding-top: 60px; */
+  margin-top: 10vh;
 }
 
 a {

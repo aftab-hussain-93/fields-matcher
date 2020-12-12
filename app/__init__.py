@@ -21,4 +21,9 @@ def create_app(config_class=Config):
 	from app.blueprints.auth.routes import auth
 	app.register_blueprint(auth)
 
+
+	@app.template_filter()
+	def format_date(given_date):
+		return given_date.strftime('%H:%M:%S, %d-%B-%Y')
+
 	return app

@@ -1,0 +1,67 @@
+// Widescreens
+
+@include mediaXl {
+}
+
+// Desktops and Laptops
+
+@include mediaLg {
+}
+
+// Tablets
+
+@include mediaMd {
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .nav-links {
+            width: 100%;
+            display: none;
+
+            &.active{
+                display: flex;
+            }
+
+            ul{
+                flex-direction: column;
+                width: 100%;
+                li {
+                    text-align: center;
+                    a{
+                        padding: .5rem 1rem;
+                    }
+                }
+            }
+        }
+
+        .toggle-button {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+
+            .bar{
+                background-color: white; // later use select text color
+                width: 100%;
+                height: 3px;
+                border-radius: 10px;
+            }
+        }
+    }
+
+    // .header-modifier{
+    //     flex-direction: row;
+    // }
+}
+
+// Smart-Phones
+
+@include mediaSm {
+
+}

@@ -1,55 +1,56 @@
 {% extends "base.html" %}
 {% block title%}
-  Upload File
+File Details
 {% endblock %}
 {% block contents %}
-<h4 class="container">What changes would you like to do with the file?
-<hr></h4>
+<h3 class="sm-heading">MODIFY FILE <span class="file-name">{{filename}}</span><span class="file-date">Uploaded:
+    file_upload_date</span></h3>
 <span id="fileId" hidden>{{ file_id }}</span>
-
-<div class="container dashboard">
+<hr>
+<div class="dashboard">
   <div id="form-contents" class="header-list">
-    <h4>Headers</h4>
-        {% for head in headings %}
-        <div class="headers">
-          <input type="text" id = "{{ head }}" class = "head" value= "{{ head }}">
-        </div>
-         {% endfor %}
+    <h3 class="sm-heading">HEADERS</h3>
+    {% for head in headings %}
+    <div class="headers">
+      <input type="text" id="{{ head }}" class="head" value="{{ head }}">
     </div>
-    <div class="header-modifier-list">
-      <h4>Modify Header</h4>
-      <div class="header-modifier">
-        <button class="btn btn-outline-dark btn-sm" id="reorderBtn">Reorder</button>
-        <button class="btn btn-outline-dark btn-sm">Add New Header</button>
-        <button class="btn btn-outline-dark btn-sm">Drop Header</button>
-      </div>
-      <h4>Modify Text</h4>
-      <div class="header-modifier">
-        <button class="btn btn-outline-dark btn-sm" id="renameBtn">Rename</button>
-        <button class="btn btn-outline-dark btn-sm" onclick="makeCapital()">Capitalize</button>
-        <button class="btn btn-outline-dark btn-sm" onclick="makeLower()">Lowercase</button>
-        <button class="btn btn-outline-dark btn-sm" onclick="makeUpper()">Upper</button>
-      </div>
-
-      <h4>Download File</h4>
-      <div class="file-downloader">
-        <button class="btn btn-outline-dark btn-sm" onclick="downloadFile('csv')">Download as CSV</button>
-        <button class="btn btn-outline-dark btn-sm" onclick="downloadFile('xlsx')">Download as EXCEL</button>
-        <button class="btn btn-outline-dark btn-sm" onclick="downloadFile('json')">Download as JSON</button>
-        <!-- <button class="btn btn-outline-dark btn-sm">Convert to Delimitted Text - Choose Delimiter - </button> -->
-      </div>
-
-      <h4>Data Extraction Tools</h4>
-      <div class="data-extractor">
-        <button class="btn btn-outline-dark btn-sm">Link Extractor</button>
-        <button class="btn btn-outline-dark btn-sm">Email Extractor</button>
-        <button class="btn btn-outline-dark btn-sm">Phone Number (Indian or others)</button>
-      </div>
+    {% endfor %}
+  </div>
+  <div class="header-modifier-list">
+    <div><h3 class="sm-heading">TOOLS</h3><i class="fas fa-redo fa-1x" title="Reset" onclick="location.reload();"></i></div>
+    <h3 class="xs-heading">Modify Header</h3>
+    <div class="header-modifier">
+      <button class="custom-btn" id="reorderBtn">Reorder</button>
+      <button class="custom-btn">Add New Header</button>
+      <button class="custom-btn" id="deleteBtn" onfocus="dropSelectedHeader(event)">Drop Header</button>
     </div>
-    <form id="downloadForm" action="/download_file" method="POST" hidden>
-    </form>
+    <h3 class="xs-heading">Modify Text</h3>
+    <div class="header-modifier">
+      <button class="custom-btn" id="renameBtn">Rename</button>
+      <button class="custom-btn" onclick="makeCapital()">Capitalize</button>
+      <button class="custom-btn" onclick="makeLower()">Lowercase</button>
+      <button class="custom-btn" onclick="makeUpper()">Upper</button>
+    </div>
+
+    <h3 class="xs-heading">Download File</h3>
+    <div class="file-downloader">
+      <button class="custom-btn" onclick="downloadFile('csv')">Download as CSV</button>
+      <button class="custom-btn" onclick="downloadFile('xlsx')">Download as EXCEL</button>
+      <button class="custom-btn" onclick="downloadFile('json')">Download as JSON</button>
+      <!-- <button class="custom-btn">Convert to Delimitted Text - Choose Delimiter - </button> -->
+    </div>
+
+    <h3 class="xs-heading">Data Extraction Tools</h3>
+    <div class="data-extractor">
+      <button class="custom-btn">Link Extractor</button>
+      <button class="custom-btn">Email Extractor</button>
+      <button class="custom-btn">Phone Number (Indian or others)</button>
+    </div>
+  </div>
+  <form id="downloadForm" action="/download_file" method="POST" hidden>
+  </form>
 </div>
 {% endblock %}
 {% block scripts %}
-  <script src="{{ url_for('static', filename='js/modify.js')}}"></script>
+<script src="{{ url_for('static', filename='js/modify.js')}}"></script>
 {% endblock %}

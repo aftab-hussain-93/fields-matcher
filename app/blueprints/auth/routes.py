@@ -5,7 +5,7 @@ from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from app.extensions import bcrypt, mongo, login_manager
 from app.models import User
-
+from bson.objectid import ObjectId
 
 auth = Blueprint('auth',__name__)
 
@@ -54,6 +54,19 @@ def logout():
 @login_required
 def profile(pub_id):
 	return render_template("account.html")
+
+
+@auth.route('/myfiles')
+@login_required
+def my_files():
+	file_collection =  mongo.db.uploaded_files
+	user_uploads = file_collection.find({'parent_file_oid': {"$exists": False}, 'user_id': current_user.public_id})
+	result = []
+	for f in user_uploads:
+		updated_files = file_collection.find({"_id": {"$in": [ObjectId(ver) for ver in f['versions']]}})
+		f['file_versions'] = updated_files
+		result.append(f)
+	return render_template('myfiles.html', user_uploads=result)
 
 # @auth.route('/reset_password', methods = ['POST','GET'])
 # def request_reset():

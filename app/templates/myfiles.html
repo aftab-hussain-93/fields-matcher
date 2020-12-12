@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title%}
+My Files
+{% endblock %}
+{% set active_page = active_page|default('myfiles') -%}
+{% block contents %}
+<header id="myfiles-header">
+    <h3 class="md-heading">Uploads</h3>
+    <h3 class="md-heading">Updated Versions</h3>
+</header>
+{% for file in user_uploads %}
+<article id="myfiles-container">
+    <div class="uploaded-file-container">
+        <h3 class="sm-heading"><a href="{{ url_for('main.file_details', file_id=file['_id']) }}">
+                {{ file['original_filename'] }}
+            </a><i class="far fa-trash-alt" title="Delete File"
+                onclick="deleteFile(fileId = '{{ file["_id"]  }}', userId= '{{ current_user.public_id }}');"></i></h3>
+        <p>Unique Name - {{file['unique_name']}}</p>
+        <p>Date Uploaded: {{ file['date_created']|format_date }}</p>
+    </div>
+    {% if file['file_versions'] %}
+    <div class="updated-versions">
+        {% for updated_file in file['file_versions'] %}
+        <div>
+            <h3 class="sm-heading"><a href="{{ url_for('main.file_details', file_id=updated_file['_id']) }}">
+                    {{ updated_file['original_filename'] }}
+                </a><i class="far fa-trash-alt" title="Delete File"
+                    onclick="deleteFile(fileId = '{{ updated_file["_id"]  }}', userId= '{{ current_user.public_id }}');"></i>
+            </h3>
+            <p>Unique Name - {{updated_file['unique_name']}}</p>
+            <p>Date Created: {{ updated_file['date_created']|format_date }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</article>
+{% endfor %}
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/myfiles.js')}}"></script>
+{% endblock %}

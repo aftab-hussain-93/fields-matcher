@@ -37,6 +37,8 @@ const makeCapital = () => {
 }
 
 
+
+
 const downloadFile = (extension) => {
   output.extension = extension;
   output.file_id = file_id;
@@ -103,34 +105,46 @@ const downloadFile = (extension) => {
     .catch(data => console.log(`error ${data}`))
 }
 
-
-
+// Drop Header function
+const dropSelectedHeader = e => {
+  const selectElem = e.relatedTarget;
+  if (typeof selectElem !== 'undefined') {
+    if (selectElem.tagName == 'INPUT') {
+      if (selectElem.getAttribute("class") == "head") {
+        flashMessages(`Removing ${selectElem.value}`, "success");
+        selectElem.parentNode.remove();
+      }
+    }
+  }
+}
 // JQuery code for grabbing and re-ordering of the headers
 $(document).ready(function () {
         let download_form;
 
         // Disable input into the file columns
-        $(".head").prop("disabled", true);
+        $(".head").prop("readonly", true);
 
         // Re-order click
         $("#reorderBtn").click(function () {
-          $(".head").prop("disabled", true);
+          $(".head").prop("readonly", true);
+          $(".head").addClass("reorder");
 
           if ($("#form-contents").data("uiSortable")) {
             $("#form-contents").sortable("enable");
           }
           else{
-            $("#form-contents").sortable({opacity:0.5,
+            $("#form-contents").sortable({opacity:0.9,
               cancel:null,
               cursor: "grabbing"});
             }
           });
 
         // Rename click
-        $("#renameBtn").click(function () {
-          $(".head").prop("disabled", false);
-          if ($("#form-contents").data("uiSortable")) {
-            $("#form-contents").sortable("disable");
-          }
-        });
+      $("#renameBtn").click(function () {
+              $(".head").removeClass("reorder");
+              $(".head").prop("readonly", false);
+              if ($("#form-contents").data("uiSortable")) {
+                $("#form-contents").sortable("disable");
+              }
+            });
       });

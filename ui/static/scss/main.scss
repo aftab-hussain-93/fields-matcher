@@ -1,0 +1,360 @@
+@import 'config';
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+  background: $primary-color;
+  margin: 0;
+  padding: 0;
+  color: set-text-color($primary-color);
+  height: 100%;
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.5;
+}
+
+// Headings
+
+h1, h2, h3{
+	margin: 0;
+	font-weight: 400;
+	&.lg-heading{
+		font-size: 6rem;
+    }
+    &.md-heading{
+        font-size: 3rem;
+        background: rgba(lighten($primary-color, 2), 0.5);
+        margin-bottom: 1rem;
+	}
+
+	&.sm-heading{
+        font-size: 2rem;
+		padding: 0.2rem 1rem;
+		background: rgba(lighten($primary-color, 2), 0.5);
+    }
+
+    &.xs-heading{
+        font-size: 1.3rem;
+		padding: 0.2rem .5rem;
+        text-transform: uppercase;
+        font-weight: 550;
+    }
+}
+
+.secondary-text-color{
+	color: $secondary-color;
+}
+// Buttons
+
+.custom-btn {
+    border: 1px solid $navbar-color;
+    background-color: $primary-color;
+    color: $navbar-color;
+    padding: .2rem .5rem;
+    border-radius: 5px;
+
+    &:hover{
+        background-color: $navbar-color;
+        color: #fff;
+    }
+}
+
+// Navbar
+
+.navbar{
+    background: $navbar-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+
+    .nav-branding{
+        font-size: 1.5rem;
+        margin: 0.5rem;
+    }
+
+    .nav-links ul{
+        padding: 0;
+        margin: 0;
+        display: flex;
+
+        .nav-link {
+            &.current {
+                background-color: lighten($navbar-color, 5);
+            }
+
+        }
+
+        li {
+            list-style: none;
+
+            a {
+                text-decoration: none;
+                color: white; // later use select text color
+                padding: 1rem;
+                display: block;
+                font-size: 1.2rem;
+            }
+
+            &:hover{
+                background-color: lighten($navbar-color, 5);
+                @include easeOut;
+            }
+        }
+    }
+}
+
+// Contents -
+.content-block {
+    margin-top: 4vh;
+}
+
+// Flashing Messages
+
+.flash-container{
+    position: fixed;
+    margin: auto;
+    width: 80%;
+    left: 10%;
+    bottom: 6rem;
+    padding: .5rem 1.5rem;
+    border-radius: 5px;
+    display: flex;
+    justify-content: flex-start;
+
+    p{
+        padding: 0;
+        margin: 0;
+        font-weight: 550;
+        font-size: 1.2rem;
+    }
+
+
+    i {
+        cursor: pointer;
+        padding: 5px 0 0 0 ;
+        margin-left: auto;
+        font-size: 1.2rem;
+        transition: transform .2s;
+
+        &:hover{
+            transform: scale(1.3);
+        }
+    }
+
+    &-dismiss{
+        opacity: 0;
+        visibility: 0;
+        @include easeOut;
+    }
+
+    &-primary {
+        @include select-alert-color(primary);
+    }
+    &-info {
+        @include select-alert-color(info);
+    }
+    &-success {
+        @include select-alert-color(success);
+    }
+
+}
+
+
+// Upload Page
+
+#upload-form-area {
+
+    height: 45vh;
+    text-align: center;
+
+    #uploadForm{
+        .custom-file{
+            display: inline;
+            width: 400px;
+            margin-bottom: 20px;
+
+            input{
+                cursor: pointer;
+            }
+
+            .file-upload-label {
+                border-radius: 10px;
+            }
+        }
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+// Features
+
+.features-section {
+
+    h1{
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .features-list{
+        list-style: none;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        grid-gap: 20px;
+        text-align: center;
+
+        li {
+            padding: 1rem;
+            background-color: #fff;
+            color: $navbar-color;
+            font-size: 450;
+            border-radius: 10px;
+        }
+    }
+
+}
+
+
+// Register and Sign-In Page
+.signinup-container{
+    text-align: center;
+
+    .signinup {
+      display: inline-block;
+      background: #ffffff;
+      padding: 10px 20px;
+      border: 1px solid darken($primary-color,25);
+      box-shadow: 5px 5px darken($primary-color,15);
+      border-radius: 3px;
+      margin-bottom: 20px;
+      @include easeOut;
+      transform: scale(1.05);
+
+    }
+}
+
+// File Details Dashboard
+.file-name{
+    margin-left: 3rem;
+    font-weight: 500;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    background: rgba(lighten($primary-color, 2), 0.5);;
+}
+
+.file-date{
+    margin-left: 1rem;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 2rem;
+    // align-items: center;
+
+    .header-list {
+        .headers {
+            padding: .5rem .2rem;
+
+            input {
+                border-radius: 3px;
+                padding: .2rem;
+                font-weight: 550;
+                color: #000;
+                @include easeOut;
+
+                &:read-only{
+                    background-color: #ccc;
+                    color: #000;
+                    cursor: default;
+                }
+
+                &:focus {
+                    background-color: red;
+                }
+
+                .selected {
+                    background-color: $navbar-color;
+                    color: #fff;
+                }
+
+            }
+        }
+    }
+
+    .header-modifier-list{
+        display: flex;
+        flex-flow: column wrap;
+        grid-row-gap: 1rem;
+
+        .sm-heading{
+            display: inline;
+        }
+
+        .header-modifier, .file-downloader, .data-extractor {
+            display: flex;
+            justify-content: flex-start;
+            flex-flow: row wrap;
+            column-gap: 1rem;
+            grid-row-gap: 1rem;
+          }
+    }
+}
+
+.reorder {
+    box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.4);
+    &:hover{
+        transform: scale(1.05);
+        cursor: grab;
+    }
+
+}
+
+
+// All Files Page
+
+#myfiles-header{
+    display: flex;
+    justify-content: space-between;
+    h3{
+        display: inline;
+        font-size: 2.5rem;
+    }
+}
+
+#myfiles-container{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-row-gap: 1rem;
+    grid-gap: .5rem;
+    // border: 1px solid black;
+    border-radius: 2px; 
+
+    .updated-versions, .uploaded-file-container {
+        background-color: #fff;
+        color: #000;
+        padding: 1rem;
+        box-shadow:5px 5px 10px 5px grey;
+
+        .sm-heading{
+            display: flex;
+            justify-content: space-between;
+            // border: 1px solid black;
+
+            i{
+                transform: scale(0.75);
+                cursor: pointer;
+            }
+        }
+
+    }
+
+}
+
+@import 'mobile';

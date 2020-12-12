@@ -11,11 +11,11 @@ from app.utils.file_manipulation import File
 
 
 main = Blueprint('main',__name__)
-BUCKET = 'lunaflaskbucket'
 
 @main.route('/index', methods = ['GET', 'POST'])
 @main.route('/', methods = ['GET', 'POST'])
 def home():
+	flash(f"HELLO",'success')
 	form = UploadForm()
 	aws = AWSBucket(current_app._get_current_object())
 	if form.validate_on_submit():
@@ -43,6 +43,8 @@ def home():
 		if current_user.is_authenticated:
 			current_user.add_file_to_user(_id.inserted_id)
 		return redirect(url_for('main.file_details', file_id=_id.inserted_id))
+	else:
+		current_app.logger.info(form.errors)
 	return render_template('index.html', form=form)
 
 @main.route('/file/<file_id>')

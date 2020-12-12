@@ -1,27 +1,40 @@
 {% extends "base.html" %}
 {% block title%}
-  Home
+  Upload a File
 {% endblock %}
 {% block contents %}
-{% if current_user.is_authenticated %}
-       <br><h4>Hello, {{current_user.email}} !</h4>
-{% endif %} 
-  <form method="POST" enctype="multipart/form-data">
-     {{ form.hidden_tag() }}
-    <fieldset class="form-group">
-      <legend class="border-bottom mt-10 mb-4">Upload Form</legend>
-     <div class="form-group">
-      {{ form.file.label() }}
-      {{ form.file(class="form-control-file") }}
-      {% if form.file.errors %}
-          {% for error in form.file.errors %}
-              <span class="text-danger">{{ error }}</span></br>
-          {% endfor %}
-      {% endif %}
-    </div>
-    <div class="form-group">
-      {{ form.submit(class="btn btn-outline-info") }}
-    </div>
-   </fieldset>
-  </form>
+<main id="upload-form-area">
+  <!-- <h1 class="sm-heading" id="showcase-message">Easy Conversion, Modification of Data</h1> -->
+  <h1><b>Easy Conversion, Modification of Data</b></h1>
+  <h2 class="sm-heading">Upload a file to get started</h2>
+  <br>
+  <form id="uploadForm" method="POST" enctype=multipart/form-data>
+    {{ form.hidden_tag() }}
+    <div class="custom-file">
+      {{ form.file(class="custom-file-input", id="fileUpload", required=True, size=10) }}
+       <label class="custom-file-label file-upload-label" id="fileUploadLabel" for="fileUpload">Choose file...</label>
+     </div>
+     {{ form.submit(class="custom-btn") }}
+   </form>
+</main>
+<section class="features-section">
+  <h1 class="md-heading">Features</h1>
+  <ul class="features-list">
+    <li>Convert to and from CSV, EXCEL and JSON data formats</li>
+    <li>View, edit, re-order, drop, add the headers of the uploaded CSV/XLSX/JSON file</li>
+    <li>Sort and Filter data</li>
+    <li>Data Extraction tools for extractng Emails, Phone Numbers, URLs, specific Keywords</li>
+    <li>Registered Users can upload multiple files, make and save changes for the future</li>
+    <li>Users can make multiple "versions" of the same uploaded file.</li>
+  </ul>
+</section>
+{% endblock %}
+{% block scripts %}
+<script>
+// Add the following code if you want the name of the file appear on select
+$(".custom-file-input").on("change", function() {
+  var fileName = $(this).val().split("\\").pop();
+  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+});
+</script>
 {% endblock %}
