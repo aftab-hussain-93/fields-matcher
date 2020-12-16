@@ -15,6 +15,7 @@ My Files
                 {{ file['original_filename'] }}
             </a><i class="far fa-trash-alt" title="Delete File"
                 onclick="deleteFile(fileId = '{{ file["_id"]  }}', userId= '{{ current_user.public_id }}');"></i></h3>
+        <hr>
         <p>Unique Name - {{file['unique_name']}}</p>
         <p>Date Uploaded: {{ file['date_created']|format_date }}</p>
     </div>
@@ -27,6 +28,7 @@ My Files
                 </a><i class="far fa-trash-alt" title="Delete File"
                     onclick="deleteFile(fileId = '{{ updated_file["_id"]  }}', userId= '{{ current_user.public_id }}');"></i>
             </h3>
+            <hr>
             <p>Unique Name - {{updated_file['unique_name']}}</p>
             <p>Date Created: {{ updated_file['date_created']|format_date }}</p>
         </div>

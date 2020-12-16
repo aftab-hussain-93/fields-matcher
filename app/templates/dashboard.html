@@ -1,15 +1,26 @@
 {% extends "base.html" %}
+{% set active_page = '' -%}
 {% block title%}
 File Details
 {% endblock %}
 {% block contents %}
-<h3 class="sm-heading">MODIFY FILE <span class="file-name">{{filename}}</span><span class="file-date">Uploaded:
-    file_upload_date</span></h3>
+<header id="dashboard-header">
+  <h3 class="sm-heading">MODIFY FILE</h3>
+  <div><span class="file-name">{{filename}}</span>
+    <span class="file-date" title="Upload Date">
+      ({{ file['date_created']|format_date }})</span>
+  </div>
+  <div>
+    <i class="fa fa-download fa-2x" aria-hidden="true" onclick="downloadFormSubmit(key='{{file["file_path"]}}',attachmentName='{{original_file_attachment}}' )" title="Download Original File"></i>
+    <a class="no-decoration" href="{{ url_for('main.delete_file', file_id=file['_id']) }}"><i class="far fa-trash-alt fa-2x" title="Delete File"></i></a>
+  </div>  
+</header>
 <span id="fileId" hidden>{{ file_id }}</span>
 <hr>
 <div class="dashboard">
   <div id="form-contents" class="header-list">
-    <h3 class="sm-heading">HEADERS</h3>
+      <h3 class="sm-heading">HEADERS </h3>
+      <br>
     {% for head in headings %}
     <div class="headers">
       <input type="text" id="{{ head }}" class="head" value="{{ head }}">
@@ -17,7 +28,9 @@ File Details
     {% endfor %}
   </div>
   <div class="header-modifier-list">
-    <div><h3 class="sm-heading">TOOLS</h3><i class="fas fa-redo fa-1x" title="Reset" onclick="location.reload();"></i></div>
+    <div>
+      <h3 class="sm-heading">TOOLS</h3><i class="fas fa-redo fa-1x" title="Reset" onclick="location.reload();"></i>
+    </div>
     <h3 class="xs-heading">Modify Header</h3>
     <div class="header-modifier">
       <button class="custom-btn" id="reorderBtn">Reorder</button>

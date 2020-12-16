@@ -1,9 +1,10 @@
 $primary-color: #CCDBDC;
 $secondary-color: #003249;
 $navbar-color: #007EA7;
-$primary-alert-color: #1E90FF;
+$primary-alert-color: #1ecbff;
 $info-alert-color:#008B8B;
 $success-alert-color: #00CC00;
+$warning-alert-color: #cc5200;
 
 @mixin easeOut{
 	transition: all 0.5s ease-out;
@@ -28,7 +29,9 @@ $success-alert-color: #00CC00;
         @include set-alert-color($info-alert-color);
     }@else if($category == success){
         @include set-alert-color($success-alert-color);
-    }
+    }@else if($category == warning){
+		@include set-alert-color($warning-alert-color);
+	}
 }
 
 // Set Text Color

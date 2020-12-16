@@ -11,6 +11,17 @@
 // Tablets
 
 @include mediaMd {
+
+    body{
+        font-size: 13px;
+    }
+    h1,h2,h3 {
+        &.sm-heading{
+            font-size: 1.5rem;
+            padding: 0.2rem .5rem;
+            font-weight: 550;
+        }
+    }
     .navbar {
         flex-direction: column;
         align-items: flex-start;
@@ -55,9 +66,26 @@
         }
     }
 
-    // .header-modifier{
-    //     flex-direction: row;
-    // }
+    // Dashboard 
+    #dashboard-header{
+        flex-direction: column;
+        justify-content: flex-start;
+        i{
+            transform: scale(0.65);
+            padding: .5rem;
+        }
+    }
+
+    .file-name{
+        font-weight: 500;
+        font-size: 1rem;
+        padding-left: .5rem;
+    }
+
+    .file-date{
+        font-size: .8rem;
+        font-weight: 400;
+    }    
 }
 
 // Smart-Phones

@@ -1,3 +1,11 @@
+// Navigation Button -  responsive NavBar
+const toggleButton = document.querySelector('.toggle-button')
+const navBarLinks = document.querySelector('.nav-links')
+
+toggleButton.addEventListener('click', () => {
+    navBarLinks.classList.toggle('active');
+})
+
 // Alerts set up. Close the alerts when button is clicked.
 let alertBtn = document.querySelector('#alert-close-button')
 let flashContainer = document.querySelector('.flash-container')
@@ -17,3 +25,4 @@ const flashMessages = (message, category) => {
     document.body.appendChild(flashDiv);
     setTimeout(() => { flashDiv.remove(); }, 1000);
   }
+

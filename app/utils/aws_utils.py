@@ -31,6 +31,12 @@ class AWSBucket:
     def put_file(self, body, key):
         s3_client = self.get_client()
         return s3_client.put_object(Body=body, Bucket=self.bucket, Key=key)
+    
+    def delete_bucket_item(self, key):
+        s3_client = self.get_client()
+        res = s3_client.delete_object(Bucket=self.bucket, Key=key)
+        # print(res)
+
 
     def aws_to_dataframe(self, key, extension):
         """Method for downloading, excel/csv/json files from AWS S3 Bucket and downloading them into a Dataframe.

@@ -35,6 +35,10 @@ class File:
         else:
             extension = None
         return extension
+    
+    @staticmethod
+    def get_ext_from_path(file_path):
+        return os.path.splitext(file_path)[1]
 
     def generate_new_file_doc(self, file_object):
         """ Method to generate a file document and returning the file object back for upload onto AWS.

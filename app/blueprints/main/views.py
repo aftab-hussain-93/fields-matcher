@@ -58,7 +58,48 @@ def file_details(file_id):
 				abort(401)
 	elif current_user.is_authenticated:
 		abort(401)
-	return render_template('dashboard.html', headings=current_file['headers'], file_id=file_id, filename=current_file['original_filename'])
+	extension = os.path.splitext(current_file['unique_name'])[1]
+	original_file_attachment = current_file['original_filename'] + extension
+	return render_template('dashboard.html',
+		headings=current_file['headers'],
+		file=current_file,
+		file_id=file_id,
+		original_file_attachment=original_file_attachment,
+		filename=current_file['original_filename'])
+
+
+@main.route('/delete/file/<file_id>')
+def delete_file(file_id):
+	files_collection = mongo.db.uploaded_files
+	current_file = files_collection.find_one({'_id': ObjectId(file_id)})
+	if current_file['user_id']:
+		if current_user.is_anonymous:
+			abort(401)
+		else:
+			if current_user.public_id != current_file['user_id']:
+				abort(401)
+	elif current_user.is_authenticated:
+		abort(401)
+	
+	# Deleting Item from DB
+	# Finding all children files
+	child_files = files_collection.find({'parent_file_oid':  ObjectId(file_id)})
+	aws = AWSBucket(current_app._get_current_object())
+
+	current_app.logger.info("Deleting Child files from AWS")
+	for child in child_files:
+		current_app.logger.info(f"Deleting {child['unique_name']}")
+		files_collection.remove({"_id": child["_id"]})
+		aws.delete_bucket_item(key=child['file_path'])
+	
+	current_app.logger.info("Deleting main file")
+	files_collection.remove({"_id": ObjectId(file_id)})
+	aws.delete_bucket_item(key=current_file['file_path'])
+
+	current_app.logger.info("Deleting app from mongo and then from AWS")
+	current_app.logger.info("multithreading can be used here")
+	current_app.logger.info("redirecting to hiome")
+	return redirect(url_for('main.home'))
 
 @main.route('/testing')
 def testing():

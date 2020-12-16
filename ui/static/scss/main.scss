@@ -15,6 +15,20 @@ body {
   line-height: 1.5;
 }
 
+a{
+    text-decoration: none;
+    color: set-text-color($primary-color);
+
+    &:hover{
+        color: set-text-color($primary-color);
+    }
+}
+// Font-Awesome Icons
+
+i{
+    cursor: pointer;
+}
+
 // Headings
 
 h1, h2, h3{
@@ -25,14 +39,12 @@ h1, h2, h3{
     }
     &.md-heading{
         font-size: 3rem;
-        background: rgba(lighten($primary-color, 2), 0.5);
         margin-bottom: 1rem;
 	}
 
 	&.sm-heading{
         font-size: 2rem;
 		padding: 0.2rem 1rem;
-		background: rgba(lighten($primary-color, 2), 0.5);
     }
 
     &.xs-heading{
@@ -59,6 +71,11 @@ h1, h2, h3{
         background-color: $navbar-color;
         color: #fff;
     }
+
+    &.activated{
+        background-color: $navbar-color;
+        color: #fff;
+    }
 }
 
 // Navbar
@@ -69,6 +86,7 @@ h1, h2, h3{
     justify-content: space-between;
     align-items: center;
     color: #fff;
+
 
     .nav-branding{
         font-size: 1.5rem;
@@ -159,6 +177,9 @@ h1, h2, h3{
     &-success {
         @include select-alert-color(success);
     }
+    &-warning {
+        @include select-alert-color(warning);
+    }
 
 }
 
@@ -238,12 +259,18 @@ h1, h2, h3{
 }
 
 // File Details Dashboard
+#dashboard-header{
+    display: flex;
+    justify-content: space-between;
+    h3{
+        display: inline;
+    }
+}
+
 .file-name{
-    margin-left: 3rem;
-    font-weight: 500;
+    font-weight: 450;
     font-size: 1.5rem;
-    text-transform: uppercase;
-    background: rgba(lighten($primary-color, 2), 0.5);;
+    text-transform: capitalize;
 }
 
 .file-date{
@@ -256,7 +283,11 @@ h1, h2, h3{
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-gap: 2rem;
-    // align-items: center;
+    background-color: #fff;
+    padding: 2rem;
+    
+    border-radius: 1rem;
+    box-shadow: 3px 3px 5px 6px #ccc;
 
     .header-list {
         .headers {
@@ -272,18 +303,18 @@ h1, h2, h3{
                 &:read-only{
                     background-color: #ccc;
                     color: #000;
-                    cursor: default;
+                    cursor: initial;
+                }
+
+                &:not(read-only){
+                    background-color: $primary-color;
+                    color: #000;
                 }
 
                 &:focus {
-                    background-color: red;
-                }
-
-                .selected {
                     background-color: $navbar-color;
                     color: #fff;
                 }
-
             }
         }
     }
@@ -313,7 +344,6 @@ h1, h2, h3{
         transform: scale(1.05);
         cursor: grab;
     }
-
 }
 
 
@@ -321,10 +351,12 @@ h1, h2, h3{
 
 #myfiles-header{
     display: flex;
-    justify-content: space-between;
+    // justify-content: space-between;
     h3{
         display: inline;
         font-size: 2.5rem;
+        width: 50%;
+        text-align: center;
     }
 }
 
@@ -352,9 +384,7 @@ h1, h2, h3{
                 cursor: pointer;
             }
         }
-
     }
-
 }
 
 @import 'mobile';
