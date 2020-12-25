@@ -1,6 +1,6 @@
 import uuid
 from flask import render_template, Blueprint, redirect, url_for, flash, request, session, current_app, jsonify
-from .forms import RegisterForm, LoginForm #, RequestResetForm, PasswordResetForm
+from .forms import RegisterForm, LoginForm , RequestResetForm, PasswordResetForm
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.urls import url_parse
 from app.extensions import bcrypt, mongo, login_manager
@@ -49,13 +49,6 @@ def logout():
 	logout_user()
 	return redirect(url_for('main.home'))
 
-
-@auth.route('/profile/user/<pub_id>')
-@login_required
-def profile(pub_id):
-	return render_template("account.html")
-
-
 @auth.route('/myfiles')
 @login_required
 def my_files():
@@ -68,18 +61,19 @@ def my_files():
 		result.append(f)
 	return render_template('myfiles.html', user_uploads=result)
 
-# @auth.route('/reset_password', methods = ['POST','GET'])
-# def request_reset():
-# 	if current_user.is_authenticated:
-# 		flash('Please logout to reset password')
-# 		return redirect(url_for('main.home'))
-# 	form = RequestResetForm()
-# 	if form.validate_on_submit():
-# 		user = User.query.filter_by(email = form.email.data).first()
-# 		send_reset_email(user)
-# 		flash('Reset details have been sent over email. Please check to reset.')
-# 		return redirect(url_for('auth.login'))
-# 	return render_template('request_reset.html', form = form)
+
+@auth.route('/reset_password', methods = ['POST','GET'])
+def request_reset():
+	if current_user.is_authenticated:
+		flash('Please logout to reset password')
+		return redirect(url_for('main.home'))
+	form = RequestResetForm()
+	if form.validate_on_submit():
+		user = User.query.filter_by(email = form.email.data).first()
+		send_reset_email(user)
+		flash('Reset details have been sent over email. Please check to reset.')
+		return redirect(url_for('auth.login'))
+	return render_template('request_reset.html', form = form)
 
 
 # @auth.route('/reset_password/<token>', methods = ['POST','GET'])

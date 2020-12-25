@@ -57,8 +57,6 @@
             {% else %}
           <li><a class="nav-link {{'current' if active_page == 'myfiles'}}"
               href="{{ url_for('auth.my_files') }}">My Files</a></li>
-          <li><a class="nav-link {{'current' if active_page == 'profile'}}"
-              href="{{ url_for('auth.profile', pub_id=current_user.public_id) }}">Profile</a></li>
           <li><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>
             {% endif %}
         </ul>

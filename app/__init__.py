@@ -1,10 +1,13 @@
 from flask import Flask
 from app.config import Config
 from .extensions import mongo, login_manager, bcrypt
+import logging
 
 def create_app(config_class=Config):
 	app = Flask(__name__, static_folder='../ui/static')
 	app.config.from_object(config_class)
+
+	logging.basicConfig(filename='error.log',level=logging.DEBUG)
 
 	mongo.init_app(app)
 

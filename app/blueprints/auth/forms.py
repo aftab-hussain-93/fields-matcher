@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, ValidationError
 from app.models import User
@@ -20,16 +21,16 @@ class RegisterForm(FlaskForm):
 		if user:
 			raise ValidationError("This email is already taken. Please use another one.")
 
-# class RequestResetForm(FlaskForm):
-# 	email = StringField("Email Address",validators=[DataRequired(),Email()])
-# 	submit = SubmitField("Request Password Reset")
+class RequestResetForm(FlaskForm):
+	email = StringField("Email Address",validators=[DataRequired(),Email()])
+	submit = SubmitField("Request Password Reset")
 
-# 	def validate_email(self, email):
-# 		user = User.query.filter_by(email = email.data).first()
-# 		if not user:
-# 			raise ValidationError("This email is not registered.")
+	def validate_email(self, email):
+		user = User.get_by_email(self.email.data)
+		if not user:
+			raise ValidationError("This email is not registered.")
 
-# class PasswordResetForm(FlaskForm):
-# 	password = PasswordField("Password",validators=[DataRequired(),Length(8)])
-# 	confirm_password = PasswordField("Confirm Password",validators=[DataRequired(),EqualTo('password')])
-# 	submit = SubmitField("Reset Password")
+class PasswordResetForm(FlaskForm):
+	password = PasswordField("Password",validators=[DataRequired(),Length(8)])
+	confirm_password = PasswordField("Confirm Password",validators=[DataRequired(),EqualTo('password')])
+	submit = SubmitField("Reset Password")

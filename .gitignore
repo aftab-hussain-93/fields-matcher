@@ -10,3 +10,4 @@ uploads
 env
 .env
 ui/node_modules/
+error.log

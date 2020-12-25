@@ -13,8 +13,10 @@ My Files
     <div class="uploaded-file-container">
         <h3 class="sm-heading"><a href="{{ url_for('main.file_details', file_id=file['_id']) }}">
                 {{ file['original_filename'] }}
-            </a><i class="far fa-trash-alt" title="Delete File"
-                onclick="deleteFile(fileId = '{{ file["_id"]  }}', userId= '{{ current_user.public_id }}');"></i></h3>
+            </a>
+            {# <i class="far fa-trash-alt" title="Delete File"
+                onclick="deleteFile(fileId = '{{ file["_id"]  }}', userId= '{{ current_user.public_id }}');"></i> #}
+            </h3>
         <hr>
         <p>Unique Name - {{file['unique_name']}}</p>
         <p>Date Uploaded: {{ file['date_created']|format_date }}</p>
@@ -25,8 +27,9 @@ My Files
         <div>
             <h3 class="sm-heading"><a href="{{ url_for('main.file_details', file_id=updated_file['_id']) }}">
                     {{ updated_file['original_filename'] }}
-                </a><i class="far fa-trash-alt" title="Delete File"
-                    onclick="deleteFile(fileId = '{{ updated_file["_id"]  }}', userId= '{{ current_user.public_id }}');"></i>
+                </a>
+                {# <i class="far fa-trash-alt" title="Delete File"
+                    onclick="deleteFile(fileId = '{{ updated_file["_id"]  }}', userId= '{{ current_user.public_id }}');"></i> #}
             </h3>
             <hr>
             <p>Unique Name - {{updated_file['unique_name']}}</p>
