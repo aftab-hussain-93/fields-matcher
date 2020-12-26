@@ -7,7 +7,11 @@ from pathlib import Path
 def create_app(config_class=Config):
 	static_path = Path.cwd().joinpath('ui','static')
 	static_p = os.path.join(os.path.dirname(os.getcwd()), r'ui/static')
-	app = Flask(__name__, static_folder=static_p)
+	print(static_p)
+	app = Flask(__name__, static_folder='../ui/static', static_url_path='/')
+	print(dir(app))
+	print(app.static_folder)
+	print(app.static_url_path)
 	app.config.from_object(config_class)
 	
 	#logging.basicConfig(filename='error.log',level=logging.INFO)

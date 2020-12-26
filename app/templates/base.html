@@ -8,12 +8,7 @@
   </title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- JQuery UI -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='jqueryui/jquery-ui.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='jqueryui/jquery-ui.structure.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='jqueryui/jquery-ui.theme.css') }}" />
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="{{ url_for('static', filename='jqueryui/jquery-ui.js') }}"></script>
+
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
@@ -31,6 +26,13 @@
   <!-- Main Style Sheet -->
   <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/main.css') }}" />
 
+  <!-- JQuery UI -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='jqueryui/jquery-ui.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='jqueryui/jquery-ui.structure.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='jqueryui/jquery-ui.theme.css') }}" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="{{ url_for('static', filename='jqueryui/jquery-ui.js') }}"></script>
+
 </head>
 <!-- Custom styles for this template -->
 <!-- <link href="cover.css" rel="stylesheet"> -->
@@ -40,7 +42,7 @@
 <body>
   <header>
     <nav class="navbar">
-      <div class="nav-branding">Brand Name</div>
+      <div class="nav-branding"><b>Fields Matcher</b></div>
       <div class="toggle-button">
         <span class="bar"></span>
         <span class="bar"></span>
