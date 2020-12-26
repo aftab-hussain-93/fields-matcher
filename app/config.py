@@ -1,4 +1,4 @@
-import os
+import os, pathlib
 import json
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -11,6 +11,7 @@ except FileNotFoundError:
    pass
 
 class Config:
+   #STATIC_FOLDER_PATH = pathlib.Path().parent + 'ui/static'
    SECRET_KEY = config.get('SECRET_KEY') or os.environ.get('SECRET_KEY')
    UPLOAD_FOLDER = "fieldsmatcher/uploads/"
    DOWNLOAD_FOLDER = "fieldsmatcher/downloads/"

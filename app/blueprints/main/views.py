@@ -15,6 +15,7 @@ main = Blueprint('main',__name__)
 @main.route('/index', methods = ['GET', 'POST'])
 @main.route('/', methods = ['GET', 'POST'])
 def home():
+	flash(url_for('static'),"success")
 	form = UploadForm()
 	aws = AWSBucket(current_app._get_current_object())
 	if form.validate_on_submit():

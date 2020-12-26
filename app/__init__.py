@@ -1,14 +1,20 @@
 from flask import Flask
 from app.config import Config
 from .extensions import mongo, login_manager, bcrypt
-import logging
+import logging, os
+from pathlib import Path
 
 def create_app(config_class=Config):
-	app = Flask(__name__, static_folder='../ui/static')
+	static_path = Path.cwd().joinpath('ui','static')
+	static_p = os.path.join(os.path.dirname(os.getcwd()), r'ui/static')
+	app = Flask(__name__, static_folder=static_p)
 	app.config.from_object(config_class)
+	
+	#logging.basicConfig(filename='error.log',level=logging.INFO)
 
-	logging.basicConfig(filename='error.log',level=logging.DEBUG)
-
+#	app.static_url_path = app.config.get('STATIC_FOLDER_PATH')
+#	app.static_folder=app.root_path + app.static_url_path
+	
 	mongo.init_app(app)
 
 	login_manager.init_app(app)
