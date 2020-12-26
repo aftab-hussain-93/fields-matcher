@@ -2,11 +2,11 @@
 
 ## To start
   
-  pip install -r requirements.txt
+    pip install -r requirements.txt
 
 ## Set Flask environment variables
 
-  flask run
+    flask run
 
 ## Features of the application
 
